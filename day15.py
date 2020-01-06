@@ -1,7 +1,7 @@
 
 from math import *
 from itertools import *
-
+from collections import *
 
 with open('day15.txt') as f:
     for line in f:

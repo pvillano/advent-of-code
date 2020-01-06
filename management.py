@@ -9,7 +9,7 @@ if __name__ == '__main__':
                 f.write(f"""
 from math import *
 from itertools import *
-
+from collections import *
 
 with open('{filename}.txt') as f:
     for line in f:
