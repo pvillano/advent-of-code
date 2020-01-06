@@ -8,11 +8,14 @@ img = '2222222222222221222222222222221221220220222222221202022222022022202022222
 width = 25
 height = 6
 area = width*height
-fewest_zeros = 10**10
-for i in range(len(img)//area):
-    layer = img[i*area:(i+1)*area]
-    num_zeros = layer.count('0')
-    if num_zeros < fewest_zeros:
-        fewest_zeros = num_zeros
-        print(layer.count('1')*layer.count('2'))
+
+for r in range(height):
+    print()
+    for c in range(width):
+        for i in range(len(img)//area):
+            px = img[i*area:(i+1)*area][c+r*width]
+            if px != '2':
+                print(' █'[int(px)], end='')
+                break
+
 
