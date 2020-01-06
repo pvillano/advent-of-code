@@ -93,7 +93,7 @@ def amp(input_data):
             return
 
 
-input_data = iter([1])
+input_data = iter([2])
 
 for x in amp(input_data):
     print(x)
