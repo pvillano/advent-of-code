@@ -6,7 +6,8 @@ data ="""..."""
 test_data = """939
 7,13,x,x,59,x,31,19"""
 
-
+import time
+execution_start = time.time()
 
 lines = test_data.rstrip().split("\n")
 #
@@ -30,13 +31,15 @@ for i, id in enumerate(bus_ids.split(",")):
     else:
         pairs.append((i,int(id)))
 
-
-time = 0
+bus_time = 0
 lcm_previous = 1
 
 for offset, id in pairs:
-    while (time + offset) % id != 0:
-        time += lcm_previous
+    while (bus_time + offset) % id != 0:
+        bus_time += lcm_previous
     lcm_previous = lcm(lcm_previous, id)
 
-print(time)
+print(bus_time)
+
+
+print(time.time() - execution_start)
