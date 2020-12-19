@@ -23,6 +23,6 @@ def debug_print(*args, **kwargs):
 
 def getlines(data:str, test_data:str, sep:str="\n"):
     if DEBUG:
-        return test_data.split(sep)
+        return test_data.rstrip().split(sep)
     else:
-        return data.split(sep)
+        return data.rstrip().split(sep)
