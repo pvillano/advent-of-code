@@ -1,3 +1,4 @@
+import time
 from collections import deque
 from itertools import count
 
@@ -35,44 +36,45 @@ print(sum([i * card for i, card in zip(count(1), reversed(p1 + p2))]))
 p1 = deque([9, 2, 6, 3, 1])
 p2 = deque([5, 8, 4, 7, 10])
 
-seen = set()
 
+def rocky_solve(p1, p2):
+    seen = set()
 
-def winner_tuple(p1deck, p2deck, game=1):
-    game_round = 1
-    while len(p1deck) > 0 and len(p2deck) > 0:
-        # print(game, game_round, p1deck, p2deck)
-        frozen = (game, tuple(p1deck), tuple(p2deck))
-        if frozen in seen:
-            return 1
-        seen.add(frozen)
-        p1c, p2c = p1deck.popleft(), p2deck.popleft()
-        if p1c <= len(p1deck) and p2c <= len(p2deck):
-            winner = winner_tuple(deque(list(p1deck)[:p1c]), deque(list(p2deck)[:p2c]), game+1)
-            if winner == 1:
+    def solve(p1deck, p2deck, game=1):
+        game_round = 1
+        while len(p1deck) > 0 and len(p2deck) > 0:
+            # print(game, game_round, p1deck, p2deck)
+            frozen = (game, tuple(p1deck), tuple(p2deck))
+            if frozen in seen:
+                return 1
+            seen.add(frozen)
+            p1c, p2c = p1deck.popleft(), p2deck.popleft()
+            if p1c <= len(p1deck) and p2c <= len(p2deck):
+                winner = solve(deque(list(p1deck)[:p1c]), deque(list(p2deck)[:p2c]), game + 1)
+                if winner == 1:
+                    p1deck.append(p1c)
+                    p1deck.append(p2c)
+                else:
+                    p2deck.append(p2c)
+                    p2deck.append(p1c)
+            elif p1c > p2c:
                 p1deck.append(p1c)
                 p1deck.append(p2c)
-            elif winner == 2:
+            else:
                 p2deck.append(p2c)
                 p2deck.append(p1c)
-            else:
-                print("PAAANIK")
-                exit(2)
-        elif p1c > p2c:
-            p1deck.append(p1c)
-            p1deck.append(p2c)
-        elif p2c > p1c:
-            p2deck.append(p2c)
-            p2deck.append(p1c)
-        else:
-            print("PANIK")
-            exit(1)
-        game_round += 1
-    if game == 1:
-        print(sum([i * card for i, card in zip(count(1), reversed(p1deck + p2deck))]))
-    if p1deck:
-        return 1
-    return 2
+            game_round += 1
+        # if game == 1:
+            # print(sum([i * card for i, card in zip(count(1), reversed(p1deck + p2deck))]))
+        if p1deck:
+            return 1
+        return 2
 
+    return solve(p1, p2)
 
-winner_tuple(p1, p2)
+if __name__ == '__main__':
+    start_time = time.time()
+
+    rocky_solve(p1, p2)
+
+    print(time.time() - start_time)
