@@ -149,9 +149,9 @@ def benchmark(part: Callable) -> None:
     ans = part()
     end_time = time.time()
     if DEBUG:
-        print(ans, "/n", "completed in", end_time - start_time, "seconds", file=sys.stderr, flush=True)
+        print(ans, "\ncompleted in", end_time - start_time, "seconds\n", file=sys.stderr, flush=True)
     else:
-        print(ans, "/n", "completed in", end_time - start_time, "seconds")
+        print(ans, "\ncompleted in", end_time - start_time, "seconds\n")
 
 
 if __name__ == "__main__":

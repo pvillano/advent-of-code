@@ -29,36 +29,41 @@ def part1():
     score = 0
     for line in lines:
         them, you = line.split(" ")
-        score += map_you[you] + 1
-        if map_them[them] == map_you[you]:
+        score += map_you[you] + 1  # shape points
+
+        if map_them[them] == map_you[you]:  # tie
             score += 3
-        elif (map_them[them] + 1) % 3 == map_you[you]:
+        elif (map_them[them] + 1) % 3 == map_you[you]:  # win
             score += 6
     return score
 
 
 def part2():
     map_them = {val: idx for idx, val in enumerate("ABC")}
-    map_you = {val: idx for idx, val in enumerate("XYZ")}
+    # play previous, same, next
     map_move = {
         "X": -1,
         "Y": 0,
         "Z": 1,
     }
-    win_points = {
+
+    # lose, tie, win
+    outcome_points = {
         "X": 0,
         "Y": 3,
         "Z": 6,
     }
-    you_to_pts = [1,2,3]
+    shape_points = [1, 2, 3]
+
     score = 0
     for line in lines:
-        them, you = line.split(" ")
-        them_int = map_them[them]
-        you_int = (map_move[you] + them_int) % 3
-        score += win_points[you] + you_to_pts[you_int]
-        debug_print("rps pts", you_to_pts[you_int])
-        debug_print("win pts", win_points[you])
+        them_str, you_str = line.split(" ")
+        them_int = map_them[them_str]
+        you_int = (map_move[you_str] + them_int) % 3
+
+        score += outcome_points[you_str] + shape_points[you_int]
+
+        debug_print("shape_points=", shape_points[you_int], "shape_points=", outcome_points[you_str])
 
     return score
 
