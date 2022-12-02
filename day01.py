@@ -17,5 +17,6 @@ def part2():
     return sum_top
 
 
-benchmark(part1)
-benchmark(part2)
+if __name__ == "__main__":
+    benchmark(part1)
+    benchmark(part2)

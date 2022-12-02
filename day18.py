@@ -29,5 +29,6 @@ def part2():
     pass
 
 
-benchmark(part1)
-benchmark(part2)
+if __name__ == "__main__":
+    benchmark(part1)
+    benchmark(part2)
