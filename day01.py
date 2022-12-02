@@ -1,20 +1,4 @@
-from collections import defaultdict, deque, Counter
-from copy import copy, deepcopy
-from functools import cache, lru_cache, partial, reduce
-from itertools import (
-    accumulate,
-    count,
-    cycle,
-    product,
-    permutations,
-    combinations,
-    pairwise,
-)
-from math import sqrt, floor, ceil, gcd, sin, cos, atan2
-
-from otqdm import otqdm
-
-from utils import benchmark, debug_print, get_day, pipe
+from utils import benchmark, get_day
 
 test = """"""
 
