@@ -23,13 +23,30 @@ DEBUG = bool(sys.gettrace())
 flatten = chain.from_iterable
 
 
-def debug_print(*args, override=False, **kwargs):
+def debug_print(*args, override=False, **kwargs) -> None:
+    """
+    Passes arguments to `print`,
+    if currently executing program
+    is being debugged or override is True
+    :param args:
+    :param override:
+    :param kwargs:
+    :return:
+    """
     if not (DEBUG or override):
         return
     return print(*args, **kwargs, file=sys.stderr, flush=True)
 
 
 def get_day(day: int, practice: str = "", *, year: int = 2022, override=False) -> str:
+    """
+
+    :param day:
+    :param practice:
+    :param year:
+    :param override:
+    :return:
+    """
     if DEBUG and not override:
         return practice.strip()
     filename = f"input{day:02d}.txt"
@@ -45,7 +62,13 @@ def get_day(day: int, practice: str = "", *, year: int = 2022, override=False) -
         return cache_file.read().strip()
 
 
-def debug_print_grid(grid, *, override=False):
+def debug_print_grid(grid, *, override=False) -> None:
+    """
+
+    :param grid:
+    :param override:
+    :return:
+    """
     if not (DEBUG or override):
         return
     for line in grid:
@@ -56,7 +79,14 @@ def debug_print_grid(grid, *, override=False):
 BASE_INDENT = len(inspect.stack()) + 1
 
 
-def debug_print_recursive(*args, override=False, **kwargs):
+def debug_print_recursive(*args, override=False, **kwargs) -> None:
+    """
+
+    :param args:
+    :param override:
+    :param kwargs:
+    :return:
+    """
     if not (DEBUG or override):
         return
     indent = len(inspect.stack()) - BASE_INDENT
@@ -65,7 +95,14 @@ def debug_print_recursive(*args, override=False, **kwargs):
 
 def debug_print_sparse_grid(
     grid_map: dict[(int, int), Any] or set, *, transpose=False, override=False
-):
+) -> None:
+    """
+
+    :param grid_map:
+    :param transpose:
+    :param override:
+    :return:
+    """
     if not (DEBUG or override):
         return
     if isinstance(grid_map, set):
@@ -102,14 +139,19 @@ def pipe(first, *args: Callable):
     return first
 
 
-def benchmark(part: Callable):
+def benchmark(part: Callable) -> None:
+    """
+    Calls a function and prints the return value
+    :param part:
+    :return: None
+    """
     start_time = time.time()
     ans = part()
     end_time = time.time()
     if DEBUG:
-        print(ans, "in", end_time - start_time, "seconds", file=sys.stderr)
+        print(ans, "/n", "completed in", end_time - start_time, "seconds", file=sys.stderr, flush=True)
     else:
-        print(ans, "in", end_time - start_time, "seconds")
+        print(ans, "/n", "completed in", end_time - start_time, "seconds")
 
 
 if __name__ == "__main__":
