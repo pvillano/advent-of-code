@@ -157,10 +157,9 @@ def benchmark(part: Callable) -> None:
 if __name__ == "__main__":
     with open("template.py") as template_file:
         template_string = template_file.read()
-        for i in range(1,26):
+        for i in range(1, 26):
             p = f"day{i:02}.py"
             if not os.path.exists(p):
                 file_contents = template_string.replace("DAYNUMBER", str(i))
                 with open(p, "x") as out_file:
                     out_file.write(file_contents)
-

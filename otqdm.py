@@ -57,17 +57,17 @@ def otqdm(
                 if last_print_n and elapsed_prev:
                     exponent = log(elapsed / elapsed_prev) / log(n / last_print_n)
                     if 0.05 <= exponent < 9.95:
-                        k = elapsed / (n ** exponent)
+                        k = elapsed / (n**exponent)
                         big_o_str = f"O(n^{exponent:3.1f})"
                         if len_iterator is not None:
-                            remaining = k * (len_iterator ** exponent) - elapsed
+                            remaining = k * (len_iterator**exponent) - elapsed
                     else:
                         base = exp(log(elapsed / elapsed_prev) / (n - last_print_n))
                         if 0.05 <= base < 9.95:
-                            k = elapsed / (base ** n)
+                            k = elapsed / (base**n)
                             big_o_str = f"O({base:3.1f}^n)"
                             if len_iterator is not None:
-                                remaining = k * (base ** len_iterator) - elapsed
+                                remaining = k * (base**len_iterator) - elapsed
                         else:
                             big_o_str = "O(?????)"
                             remaining = None

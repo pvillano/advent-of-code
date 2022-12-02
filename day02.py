@@ -47,7 +47,12 @@ def part2():
 
         score += outcome_points[you_str] + shape_points[you_int]
 
-        debug_print("shape_points=", shape_points[you_int], "shape_points=", outcome_points[you_str])
+        debug_print(
+            "shape_points=",
+            shape_points[you_int],
+            "shape_points=",
+            outcome_points[you_str],
+        )
 
     return score
 
