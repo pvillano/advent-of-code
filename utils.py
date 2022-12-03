@@ -145,13 +145,14 @@ def benchmark(part: Callable) -> None:
     :param part:
     :return: None
     """
-    start_time = time.time()
+    start_time = time.perf_counter_ns()
     ans = part()
-    end_time = time.time()
+    end_time = time.perf_counter_ns()
+    seconds = (end_time - start_time)/10**9
     if DEBUG:
-        print(ans, "\ncompleted in", end_time - start_time, "seconds\n", file=sys.stderr, flush=True)
+        print(ans, f"\ncompleted in {seconds:0.3f} seconds\n", file=sys.stderr, flush=True)
     else:
-        print(ans, "\ncompleted in", end_time - start_time, "seconds\n")
+        print(ans, f"\ncompleted in {seconds:0.3f} seconds\n")
 
 
 if __name__ == "__main__":
