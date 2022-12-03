@@ -1,20 +1,30 @@
 from utils import benchmark, get_day
 
-test = """"""
+test = """1000
+2000
+3000
+
+4000
+
+5000
+6000
+
+7000
+8000
+9000
+
+10000"""
 
 elves = get_day(1, test).split("\n\n")
 bags = [[int(line) for line in elf.split("\n")] for elf in elves]
 
 
 def part1():
-    return max([sum(x) for x in bags])
+    return max(sum(x) for x in bags)
 
 
 def part2():
-    elf_totals = [sum(x) for x in bags]
-    best_elves = sorted(elf_totals)
-    sum_top = sum(best_elves[-3:])
-    return sum_top
+    return sum(sorted(sum(x) for x in bags)[-3:])
 
 
 if __name__ == "__main__":
