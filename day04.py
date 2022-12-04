@@ -1,20 +1,7 @@
-from collections import defaultdict, deque, Counter
-from copy import copy, deepcopy
-from functools import cache, lru_cache, partial, reduce
-from itertools import (
-    accumulate,
-    count,
-    cycle,
-    product,
-    permutations,
-    combinations,
-    pairwise,
-)
-from math import sqrt, floor, ceil, gcd, sin, cos, atan2
+import operator
+from functools import reduce
 
-from otqdm import otqdm
-
-from utils import benchmark, debug_print, get_day, pipe
+from utils import benchmark, get_day
 
 test = """2-4,6-8
 2-3,4-5
@@ -29,10 +16,10 @@ lines = get_day(4, test).split("\n")
 def part1():
     tot = 0
     for line in lines:
-        first, second = line.split(',')
-        l1, l2 = first.split("-")
-        r1, r2 = second.split("-")
-        l1, l2, r1, r2 = list(map(int, [l1, l2, r1, r2]))
+        left, right = line.split(",")
+        l1, l2 = left.split("-")
+        r1, r2 = right.split("-")
+        l1, l2, r1, r2 = map(int, [l1, l2, r1, r2])
         if l1 <= r1 <= r2 <= l2 or r1 <= l1 <= l2 <= r2:
             tot += 1
     return tot
@@ -41,15 +28,31 @@ def part1():
 def part2():
     tot = 0
     for line in lines:
-        first, second = line.split(',')
-        l1, l2 = first.split("-")
-        r1, r2 = second.split("-")
-        l1, l2, r1, r2 = list(map(int, [l1, l2, r1, r2]))
+        left, right = line.split(",")
+        l1, l2 = left.split("-")
+        r1, r2 = right.split("-")
+        l1, l2, r1, r2 = map(int, [l1, l2, r1, r2])
         if l1 <= r1 <= l2 or l1 <= r2 <= l2 or r1 <= l2 <= r2 or r1 <= l2 <= r2:
             tot += 1
     return tot
 
 
+def part2alt():
+    tot = 0
+    for line in lines:
+        a, b, c, d = map(int, line.replace(',', '-').split('-'))
+        if set(range(a, b + 1)) & set(range(c, d + 1)):
+            tot += 1
+    return tot
+
+
+def part2alt2():
+    s = '\n'.join(lines)
+    return sum([bool(reduce(operator.and_, [set((lambda a, b: range(a, b + 1))(*map(int, elf.split("-")))) for elf in line.split(",")])) for line in s.split('\n')])
+
+
 if __name__ == "__main__":
     benchmark(part1)
     benchmark(part2)
+    benchmark(part2alt)
+    benchmark(part2alt2)
