@@ -39,16 +39,9 @@ def debug_print(*args, override=False, **kwargs) -> None:
 
 
 def get_day(day: int, practice: str = "", *, year: int = 2022, override=False) -> str:
-    """
-
-    :param day:
-    :param practice:
-    :param year:
-    :param override:
-    :return:
-    """
     if DEBUG and not override:
-        return practice
+        return practice.rstrip("\n")
+
     filename = f"input{day:02d}.txt"
     if not os.path.exists(filename):
         with open(".token", "r") as token_file:
@@ -58,8 +51,9 @@ def get_day(day: int, practice: str = "", *, year: int = 2022, override=False) -
         )
         with open(filename, "w") as cache_file:
             cache_file.write(response.text)
+
     with open(filename) as cache_file:
-        return cache_file.read()
+        return cache_file.read().rstrip("\n")
 
 
 def debug_print_grid(grid, *, override=False) -> None:
@@ -148,9 +142,11 @@ def benchmark(part: Callable) -> None:
     start_time = time.perf_counter_ns()
     ans = part()
     end_time = time.perf_counter_ns()
-    seconds = (end_time - start_time)/10**9
+    seconds = (end_time - start_time) / 10**9
     if DEBUG:
-        print(ans, f"\ncompleted in {seconds:0.3f} seconds\n", file=sys.stderr, flush=True)
+        print(
+            ans, f"\ncompleted in {seconds:0.3f} seconds\n", file=sys.stderr, flush=True
+        )
     else:
         print(ans, f"\ncompleted in {seconds:0.3f} seconds\n")
 
