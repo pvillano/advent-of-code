@@ -48,18 +48,18 @@ def get_day(day: int, practice: str = "", *, year: int = 2022, override=False) -
     :return:
     """
     if DEBUG and not override:
-        return practice.strip()
+        return practice
     filename = f"input{day:02d}.txt"
     if not os.path.exists(filename):
         with open(".token", "r") as token_file:
-            cookies = {"session": token_file.read().strip()}
+            cookies = {"session": token_file.read()}
         response = requests.get(
             f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies
         )
         with open(filename, "w") as cache_file:
-            cache_file.write(response.text.strip())
+            cache_file.write(response.text)
     with open(filename) as cache_file:
-        return cache_file.read().strip()
+        return cache_file.read()
 
 
 def debug_print_grid(grid, *, override=False) -> None:
