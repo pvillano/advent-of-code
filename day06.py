@@ -16,17 +16,21 @@ from otqdm import otqdm
 
 from utils import benchmark, debug_print, get_day, pipe
 
-test = """"""
+test = """mjqjpqmgbljsphdztnvjfqwrcgsmlb"""
 
-lines = get_day(6, test).split("\n")
+line = get_day(6, test)
 
 
 def part1():
-    pass
+    for idx, abcd in enumerate(zip(line[0:], line[1:], line[2:], line[3:])):
+        if len(set(abcd)) == 4:
+            return idx+4
 
 
 def part2():
-    pass
+    for idx, abcd in enumerate(zip(*[line[i:] for i in range(14)])):
+        if len(set(abcd)) == 14:
+            return idx+14
 
 
 if __name__ == "__main__":
