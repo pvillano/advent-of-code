@@ -1,21 +1,6 @@
 import json
-from collections import defaultdict, deque, Counter
-from copy import copy, deepcopy
-from functools import cache, lru_cache, partial, reduce
-from itertools import (
-    accumulate,
-    count,
-    cycle,
-    product,
-    permutations,
-    combinations,
-    pairwise,
-)
-from math import sqrt, floor, ceil, gcd, sin, cos, atan2
 
-from otqdm import otqdm
-
-from utils import benchmark, debug_print, get_day, pipe
+from utils import benchmark, debug_print, get_day
 
 test = """$ cd /
 $ ls
@@ -45,8 +30,6 @@ lines = get_day(7, test).split("\n")
 
 
 def jsonify(lines: list[str]):
-    stack = []
-    cur_dir = []
     yield "["
     for line in lines[1:]:
         tokens = line.split()
@@ -64,26 +47,24 @@ def jsonify(lines: list[str]):
             raise ValueError("unknown " + line)
     yield "]"
 
-# returns suminside, sumsmallinside
+
+# returns sum_inside, sum_small_inside
 def recurse(l):
     if type(l) == int:
         return l, 0
     elif type(l) == list:
-        suminside = 0
-        sumsmallinside = 0
+        sum_inside = 0
+        sum_small_inside = 0
         for i in l:
             si, ss = recurse(i)
-            suminside += si
-            sumsmallinside += ss
-        if suminside < 100000:
-            sumsmallinside += suminside
-        return suminside, sumsmallinside
-
-
+            sum_inside += si
+            sum_small_inside += ss
+        if sum_inside < 100000:
+            sum_small_inside += sum_inside
+        return sum_inside, sum_small_inside
 
 
 def part1():
-    line_ptr = 0
     myson = "".join(jsonify(lines)).replace(",]", "]")
     rcount = myson.count("[") - myson.count("]")
     myson += "".join(["]"] * rcount)
@@ -92,17 +73,18 @@ def part1():
     return recurse(myson)[1]
 
 
-# returns suminside
+# returns sum_inside
 def recurse2(l, g):
     if type(l) == int:
         return l
     elif type(l) == list:
-        suminside = 0
+        sum_inside = 0
         for i in l:
-            si = recurse2(i,g)
-            suminside += si
-        g.append(suminside)
-        return suminside
+            si = recurse2(i, g)
+            sum_inside += si
+        g.append(sum_inside)
+        return sum_inside
+
 
 def part2():
     myson = "".join(jsonify(lines)).replace(",]", "]")
@@ -111,14 +93,11 @@ def part2():
     myson = json.loads(myson)
     debug_print(myson)
     g = []
-    sum_all = recurse2(myson, g)
-    debug_print(sum_all)
-    used = sum_all
+    used = recurse2(myson, g)
     unused = 70000000 - used
     additional_needed = 30000000 - unused
     debug_print(f"{used=} {unused=} {additional_needed=}")
     return min(filter(lambda x: x >= additional_needed, g))
-
 
 
 if __name__ == "__main__":
