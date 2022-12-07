@@ -1,4 +1,6 @@
 import json
+import re
+from typing import SupportsIndex
 
 from utils import benchmark, debug_print, get_day
 
@@ -91,7 +93,6 @@ def part2():
     rcount = myson.count("[") - myson.count("]")
     myson += "".join(["]"] * rcount)
     myson = json.loads(myson)
-    debug_print(myson)
     g = []
     used = recurse2(myson, g)
     unused = 70000000 - used
@@ -100,6 +101,55 @@ def part2():
     return min(filter(lambda x: x >= additional_needed, g))
 
 
+class str2(str):
+    def regex_sub(self, pattern, repl):
+        return str2(re.sub(pattern, repl, self))
+
+    def removeprefix(self, __prefix: str) -> str:
+        return str2(super().removeprefix(__prefix))
+
+    def replace(self, __old: str, __new: str, __count: SupportsIndex = -1) -> str:
+        return str2(super().replace(__old, __new, __count))
+
+    def strip(self, __chars: str | None = None) -> str:
+        return str2(super().strip(__chars))
+
+
+def cancer():
+    s = (
+        str2(get_day(7, test))
+        .removeprefix("$ cd /")
+        .replace("$ ls", "[")
+        .replace("$ cd ..", "]")
+        .regex_sub("[$a-z.]", "")  # remove file/folder names and remaining '$'
+        .strip()
+        .regex_sub("\\[\\s*", "[")  # trim space before '['
+        .regex_sub("\\s*]", "]")  # trim space after ']'
+        .regex_sub("\\s+", ",")  # replace remaining whitespace with commas
+    )
+
+    s = "[" + s
+    unmatched_count = s.count("[") - s.count("]")
+    s += "]" * unmatched_count
+
+    js = json.loads(s)
+    folder_sizes = []
+
+    def space_used(folder):
+        if type(folder) == int:
+            return folder
+        sum_inside = sum(space_used(i) for i in folder)
+        folder_sizes.append(sum_inside)
+        return sum_inside
+
+    additional_needed = space_used(js) - 40000000
+    return (
+        sum(filter(lambda x: x <= 100000, folder_sizes)),
+        min(filter(lambda x: x >= additional_needed, folder_sizes)),
+    )
+
+
 if __name__ == "__main__":
     benchmark(part1)
     benchmark(part2)
+    benchmark(cancer)
