@@ -28,9 +28,9 @@ def debug_print(*args, override=False, **kwargs) -> None:
     Passes arguments to `print`,
     if currently executing program
     is being debugged or override is True
-    :param args:
+    :param args: same as print
     :param override:
-    :param kwargs:
+    :param kwargs: same as print
     :return:
     """
     if not (DEBUG or override):
@@ -49,8 +49,11 @@ def get_day(day: int, practice: str = "", *, year: int = 2022, override=False) -
         response = requests.get(
             f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies
         )
-        with open(filename, "w") as cache_file:
-            cache_file.write(response.text)
+        if response.status_code == 404:
+            raise ConnectionRefusedError("Too Early!")
+        else:
+            with open(filename, "w") as cache_file:
+                cache_file.write(response.text)
 
     with open(filename) as cache_file:
         return cache_file.read().rstrip("\n")
