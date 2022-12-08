@@ -1,7 +1,4 @@
-from itertools import (
-    count,
-    product,
-)
+from itertools import count, product
 
 from utils import benchmark, get_day
 
@@ -20,15 +17,14 @@ def gridify():
 
 
 def part1():
-    tot = 0
     rows = len(lines)
     cols = len(lines[0])
     visible = [[False] * cols for _ in range(rows)]
     index_sets = (
-            [[(i, j) for i in range(rows)] for j in range(cols)]
-            + [[(i, j) for i in reversed(range(rows))] for j in range(cols)]
-            + [[(i, j) for j in range(cols)] for i in range(rows)]
-            + [[(i, j) for j in reversed(range(cols))] for i in range(rows)]
+        [[(i, j) for i in range(rows)] for j in range(cols)]
+        + [[(i, j) for i in reversed(range(rows))] for j in range(cols)]
+        + [[(i, j) for j in range(cols)] for i in range(rows)]
+        + [[(i, j) for j in reversed(range(cols))] for i in range(rows)]
     )
     data = gridify()
     for index_set in index_sets:
@@ -46,7 +42,7 @@ def part2():
     cols = len(lines[0])
     data = gridify()
 
-    def itera():
+    def generator():
         for i, j in product(range(rows), range(cols)):
             highest_allowed = data[i][j]
             score = 1
@@ -60,11 +56,9 @@ def part2():
                     if data[i2][j2] >= highest_allowed:
                         break
                 score *= visible_cnt
-            if i == 1 and j == 2:
-                pass
             yield score
 
-    return max(itera())
+    return max(generator())
 
 
 if __name__ == "__main__":
