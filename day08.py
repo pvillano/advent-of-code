@@ -1,32 +1,70 @@
-from collections import defaultdict, deque, Counter
-from copy import copy, deepcopy
-from functools import cache, lru_cache, partial, reduce
 from itertools import (
-    accumulate,
     count,
-    cycle,
     product,
-    permutations,
-    combinations,
-    pairwise,
 )
-from math import sqrt, floor, ceil, gcd, sin, cos, atan2
 
-from otqdm import otqdm
+from utils import benchmark, get_day
 
-from utils import benchmark, debug_print, get_day, pipe
+test = """30373
+25512
+65332
+33549
+35390"""
 
-test = """"""
+raw = get_day(8, test)
+lines = raw.split("\n")
 
-lines = get_day(8, test).split("\n")
+
+def gridify():
+    return [list(map(int, line)) for line in lines]
 
 
 def part1():
-    pass
+    tot = 0
+    rows = len(lines)
+    cols = len(lines[0])
+    visible = [[False] * cols for _ in range(rows)]
+    index_sets = (
+            [[(i, j) for i in range(rows)] for j in range(cols)]
+            + [[(i, j) for i in reversed(range(rows))] for j in range(cols)]
+            + [[(i, j) for j in range(cols)] for i in range(rows)]
+            + [[(i, j) for j in reversed(range(cols))] for i in range(rows)]
+    )
+    data = gridify()
+    for index_set in index_sets:
+        highest_seen = -1
+        for i, j in index_set:
+            if data[i][j] > highest_seen:
+                highest_seen = data[i][j]
+                visible[i][j] = True
+
+    return sum(map(sum, visible))
 
 
 def part2():
-    pass
+    rows = len(lines)
+    cols = len(lines[0])
+    data = gridify()
+
+    def itera():
+        for i, j in product(range(rows), range(cols)):
+            highest_allowed = data[i][j]
+            score = 1
+            for d_i, d_j in ((0, -1), (0, 1), (-1, 0), (1, 0)):
+                visible_cnt = 0
+                for k in count(1):
+                    i2, j2 = i + k * d_i, j + k * d_j
+                    if not (i2 in range(rows) and j2 in range(cols)):
+                        break
+                    visible_cnt += 1
+                    if data[i2][j2] >= highest_allowed:
+                        break
+                score *= visible_cnt
+            if i == 1 and j == 2:
+                pass
+            yield score
+
+    return max(itera())
 
 
 if __name__ == "__main__":
