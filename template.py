@@ -18,7 +18,8 @@ from utils import benchmark, debug_print, get_day, pipe
 
 test = """"""
 
-lines = get_day(DAYNUMBER, test).split("\n")
+raw = get_day(DAYNUMBER, test)
+lines = raw.split("\n")
 
 
 def part1():
