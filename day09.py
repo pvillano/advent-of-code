@@ -1,32 +1,84 @@
-from collections import defaultdict, deque, Counter
-from copy import copy, deepcopy
-from functools import cache, lru_cache, partial, reduce
-from itertools import (
-    accumulate,
-    count,
-    cycle,
-    product,
-    permutations,
-    combinations,
-    pairwise,
-)
-from math import sqrt, floor, ceil, gcd, sin, cos, atan2
+from utils import benchmark, get_day
 
-from otqdm import otqdm
+test = """R 5
+U 8
+L 8
+D 3
+R 17
+D 10
+L 25
+U 20"""
 
-from utils import benchmark, debug_print, get_day, pipe
+raw = get_day(9, test)
+lines = raw.split("\n")
 
-test = """"""
+dirmap = {
+    "R": (1, 0),
+    "U": (0, 1),
+    "L": (-1, 0),
+    "D": (0, -1),
+}
 
-lines = get_day(9, test).split("\n")
+
+def single_stepper():
+    for line in lines:
+        direction, distance = line.split()
+        direction = dirmap[direction]
+        distance = int(distance)
+        for i in range(distance):
+            yield direction
 
 
 def part1():
-    pass
+    hx, hy, tx, ty = 0,0,0,0
+    seen = {(0, 0)}
+    for dx, dy in single_stepper():
+        hx += dx
+        hy += dy
+        # hx and tx differ by 0 1 or 2
+        # 2,? requires movement
+        if abs(hx-tx) == 2:
+            if abs(hy-ty) == 1:
+                ty=hy
+            tx = (hx+tx)/2
+            seen.add((tx,ty))
+        elif abs(hy-ty) == 2:
+            if abs(hx-tx) == 1:
+                tx=hx
+            ty = (hy+ty)/2
+            seen.add((tx,ty))
+    return len(seen)
 
+
+def propagate(knots):
+    for idx in range(1, len(knots)):
+        hx, hy = knots[idx-1]
+        tx, ty = knots[idx]
+        if abs(hx-tx) == 2:
+            if abs(hy-ty) == 2:
+                ty = (hy+ty)/2
+            elif abs(hy-ty) == 1:
+                ty = hy
+            tx = (hx+tx)/2
+        elif abs(hy-ty) == 2:
+            assert abs(hx-tx) in (0.0, 1.0)
+            if abs(hx-tx) == 1:
+                tx = hx
+            ty = (hy+ty)/2
+        else:
+            assert abs(hx-tx) < 2 and abs(hy-ty) < 2
+        knots[idx] = tx, ty
 
 def part2():
-    pass
+    knots = [(0,0) for _ in range(10)]
+    seen = {(0, 0)}
+    for dx, dy in single_stepper():
+        knots[0] = knots[0][0] + dx, knots[0][1] + dy
+        # hx and tx differ by 0 1 or 2
+        # 2,? requires movement
+        propagate(knots)
+        seen.add(knots[-1])
+    return len(seen)
 
 
 if __name__ == "__main__":
