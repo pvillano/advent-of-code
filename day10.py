@@ -178,7 +178,7 @@ def part2():
         if (idx % 40) in (x - 1, x, x + 1):
             row, col = divmod(idx % 240, 40)
             display[row][col] = "#"
-    return ["".join(x) for x in display]
+    return "\n".join("".join(x) for x in display)
 
 
 if __name__ == "__main__":
