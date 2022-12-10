@@ -146,20 +146,16 @@ addx -11
 noop
 noop
 noop"""
+
 raw = get_day(10, test)
 lines = raw.split("\n")
-
-strengths = range(20, 221, 40)
 
 
 def expand():
     for line in lines:
-        if line == "noop":
-            yield 0
-        else:
-            yield 0
-            op, val = line.split()
-            yield int(val)
+        yield 0
+        if line != "noop":
+            yield int(line.split()[1])
 
 
 def part1():
@@ -168,9 +164,7 @@ def part1():
     for idx, val in enumerate(expand()):
         idx += 2
         x += val
-        # debug_print(f"{idx=} {x=}")
-        if idx in strengths:
-            # debug_print(f"{idx=} {x*idx=}")
+        if idx in range(20, 221, 40):
             tot += x * idx
     return x, tot
 
@@ -184,7 +178,7 @@ def part2():
         if (idx % 40) in (x - 1, x, x + 1):
             row, col = divmod(idx % 240, 40)
             display[row][col] = "#"
-    print(*["".join(x) for x in display], sep="\n")
+    return ["".join(x) for x in display]
 
 
 if __name__ == "__main__":
