@@ -14,6 +14,7 @@ import os
 import sys
 import time
 from itertools import chain
+from pprint import pprint
 from typing import Any, Callable
 
 import requests as requests
@@ -147,11 +148,13 @@ def benchmark(part: Callable) -> None:
     end_time = time.perf_counter_ns()
     seconds = (end_time - start_time) / 10**9
     if DEBUG:
+        pprint(ans, stream=sys.stderr)
         print(
-            ans, f"\ncompleted in {seconds:0.3f} seconds\n", file=sys.stderr, flush=True
+            f"completed in {seconds:0.3f} seconds\n", file=sys.stderr, flush=True
         )
     else:
-        print(ans, f"\ncompleted in {seconds:0.3f} seconds\n")
+        pprint(ans)
+        print(f"completed in {seconds:0.3f} seconds\n")
 
 
 if __name__ == "__main__":
