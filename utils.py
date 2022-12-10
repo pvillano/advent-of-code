@@ -14,7 +14,7 @@ import os
 import sys
 import time
 from itertools import chain
-from pprint import pprint
+from pprint import pprint as not_my_pp
 from typing import Any, Callable
 
 import requests as requests
@@ -135,6 +135,16 @@ def pipe(first, *args: Callable):
     for func in args:
         first = func(first)
     return first
+
+
+def pprint(object_, stream=None, indent=1, width=80, depth=None, *,
+           compact=False, sort_dicts=True, underscore_numbers=False):
+    if isinstance(object_, str):
+        print('"""', file=stream)
+        print(object_.replace("\\", "\\\\"))
+        print('"""', file=stream)
+    else:
+        not_my_pp(object_, stream, indent, width, depth, compact=compact, sort_dicts=sort_dicts, underscore_numbers=underscore_numbers)
 
 
 def benchmark(part: Callable) -> None:
