@@ -31,7 +31,7 @@ $ ls
 lines = get_day(7, test).split("\n")
 
 
-def jsonify(lines: list[str]):
+def jsonify():
     yield "["
     for line in lines[1:]:
         tokens = line.split()
@@ -52,9 +52,9 @@ def jsonify(lines: list[str]):
 
 # returns sum_inside, sum_small_inside
 def recurse(l):
-    if type(l) == int:
+    if isinstance(l, int):
         return l, 0
-    elif type(l) == list:
+    elif isinstance(l, list):
         sum_inside = 0
         sum_small_inside = 0
         for i in l:
@@ -67,7 +67,7 @@ def recurse(l):
 
 
 def part1():
-    myson = "".join(jsonify(lines)).replace(",]", "]")
+    myson = "".join(jsonify()).replace(",]", "]")
     rcount = myson.count("[") - myson.count("]")
     myson += "".join(["]"] * rcount)
     myson = json.loads(myson)
@@ -77,9 +77,9 @@ def part1():
 
 # returns sum_inside
 def recurse2(l, g):
-    if type(l) == int:
+    if isinstance(l, int):
         return l
-    elif type(l) == list:
+    elif isinstance(l, list):
         sum_inside = 0
         for i in l:
             si = recurse2(i, g)
@@ -89,7 +89,7 @@ def recurse2(l, g):
 
 
 def part2():
-    myson = "".join(jsonify(lines)).replace(",]", "]")
+    myson = "".join(jsonify()).replace(",]", "]")
     rcount = myson.count("[") - myson.count("]")
     myson += "".join(["]"] * rcount)
     myson = json.loads(myson)
@@ -136,7 +136,7 @@ def cancer():
     folder_sizes = []
 
     def space_used(folder):
-        if type(folder) == int:
+        if isinstance(folder, int):
             return folder
         sum_inside = sum(space_used(i) for i in folder)
         folder_sizes.append(sum_inside)
