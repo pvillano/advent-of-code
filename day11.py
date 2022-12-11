@@ -1,4 +1,3 @@
-import operator
 from dataclasses import dataclass
 from functools import reduce
 from math import lcm
@@ -36,7 +35,7 @@ Monkey 3:
 """
 
 raw = get_day(11, test)
-monkies = raw.split("\n\n")
+monkey_str_list = raw.split("\n\n")
 
 
 @dataclass
@@ -49,9 +48,8 @@ class Monkey:
     inspect_count: int
 
 
-def parsemonkey(monkey):
+def parse_monkey(monkey):
     lines = monkey.split("\n")
-    assert len(lines) == 6
     items_str = lines[1].split(": ")[1]
     items = list(map(int, items_str.split(", ")))
     operation_str = lines[2].split("new = ")[1]
@@ -64,7 +62,7 @@ def parsemonkey(monkey):
 
 
 def part1():
-    my_monks: list[Monkey] = [parsemonkey(m) for m in monkies]
+    my_monks: list[Monkey] = [parse_monkey(m) for m in monkey_str_list]
     for round_number in range(20):
         for idx, monkey in enumerate(my_monks):
             debug_print(f"Monkey {idx}:")
@@ -96,7 +94,7 @@ def part1():
 
 
 def part2():
-    my_monks: list[Monkey] = [parsemonkey(m) for m in monkies]
+    my_monks: list[Monkey] = [parse_monkey(m) for m in monkey_str_list]
     mega_mod = reduce(lcm, [m.divisor for m in my_monks])
     for round_number in range(10000):
         for idx, monkey in enumerate(my_monks):
@@ -115,6 +113,48 @@ def part2():
     return best_monks[-1] * best_monks[-2]
 
 
+def parse_monkey2(monkey):
+    lines = monkey.split("\n")
+    items_str = lines[1].split(": ")[1]
+    items = list(map(int, items_str.split(", ")))
+    operation_str = lines[2].split("new = ")[1]
+
+    if operation_str.count("old") == 2:
+        op_fun = lambda x: x * x
+    elif "+" in operation_str:
+        capture = int(operation_str.split()[-1])
+        op_fun = lambda x: x + capture
+    else:
+        assert "*" in operation_str
+        capture = int(operation_str.split()[-1])
+        op_fun = lambda x: x * capture
+
+    test_divisor = int(lines[3].split()[-1])
+    if_true = int(lines[4].split()[-1])
+    if_false = int(lines[5].split()[-1])
+
+    return Monkey(items, op_fun, test_divisor, if_true, if_false, 0)
+
+
+def part2fast():
+    monkey_list: list[Monkey] = [parse_monkey2(m) for m in monkey_str_list]
+    mega_mod = reduce(lcm, [m.divisor for m in monkey_list])
+    for _ in range(10000):
+        for monkey in monkey_list:
+            for item in monkey.items:
+                item = monkey.operation(item)
+                item %= mega_mod
+                if (item % monkey.divisor) == 0:
+                    monkey_list[monkey.if_true].items.append(item)
+                else:
+                    monkey_list[monkey.if_false].items.append(item)
+                monkey.inspect_count += 1
+            monkey.items.clear()
+    best_monks = sorted([m.inspect_count for m in monkey_list])
+    return best_monks[-1] * best_monks[-2]
+
+
 if __name__ == "__main__":
     benchmark(part1)
     benchmark(part2)
+    benchmark(part2fast)
