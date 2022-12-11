@@ -173,7 +173,7 @@ if __name__ == "__main__":
         template_string = template_file.read()
 
         if t.tm_mon == 12:
-            up_to_day = t.tm_mday
+            up_to_day = t.tm_mday + 1
         else:
             up_to_day = 25
 
