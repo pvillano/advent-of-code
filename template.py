@@ -1,3 +1,4 @@
+import operator
 from collections import defaultdict, deque, Counter
 from copy import copy, deepcopy
 from functools import cache, lru_cache, partial, reduce
