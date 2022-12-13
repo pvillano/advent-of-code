@@ -1,3 +1,5 @@
+import json
+from functools import cmp_to_key
 from itertools import (
     chain,
 )
@@ -87,6 +89,25 @@ def part2():
     debug_print()
     for x in packets:
         debug_print(x)
+    i, j = packets.index([[2]]) + 1, packets.index([[6]]) + 1
+    debug_print(i, j)
+    return i * j
+
+
+def part2v2():
+    packets = [json.loads(line) for line in raw.split("\n") if line]
+    packets.append([[2]])
+    packets.append([[6]])
+
+    def cmp(left, right):
+        return {"yes": -1, "maybe": 0, "no": 1}[in_order(left, right)]
+
+    packets = sorted(packets, key=cmp_to_key(cmp))
+
+    debug_print()
+    for x in packets:
+        debug_print(x)
+
     i, j = packets.index([[2]]) + 1, packets.index([[6]]) + 1
     debug_print(i, j)
     return i * j
