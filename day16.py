@@ -137,7 +137,9 @@ def parse():
         # debug_print(f"{name=}, {rate=}, {childrent=}")
         assert name not in valves_dict
         valves_dict[name] = (rate, childrent)
-    itoa = sorted(valves_dict.keys())
+    itoa = sorted(valves_dict.keys(), key=lambda x: -valves_dict[x][0])
+    itoa.remove('AA')
+    itoa = ['AA'] + itoa
     atoi = {ch: idx for idx, ch in enumerate(itoa)}
     weights = []
     edges = []
@@ -207,7 +209,7 @@ def part2():
         return best, future
 
     for i in otqdm(range(27), percent_is_time=True, bars_is_time=True):
-        dp()
+        dp(time_left=i)
     return dp()
 
 
