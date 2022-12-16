@@ -15,7 +15,7 @@ from math import sqrt, floor, ceil, gcd, sin, cos, atan2
 
 from otqdm import otqdm
 
-from utils import benchmark, debug_print, get_day, pipe, debug_print_recursive
+from utils import benchmark, debug_print, get_day, pipe, debug_print_recursive, submit
 
 test = """Valve AA has flow rate=0; tunnels lead to valves DD, II, BB
 Valve BB has flow rate=13; tunnels lead to valves CC, AA
@@ -127,7 +127,7 @@ def part1():
 
 
 def parse():
-    valves = dict()
+    valves_dict = dict()
     for line in lines:
         name, rest = line.removeprefix("Valve ").split(" has flow rate=")
         rate, rest = rest.split("; ")
@@ -135,13 +135,22 @@ def parse():
         rest = rest.removeprefix("tunnel leads to valve ").removeprefix("tunnels lead to valves ")
         childrent = rest.split(", ")
         # debug_print(f"{name=}, {rate=}, {childrent=}")
-        assert name not in valves
-        valves[name] = (rate, childrent)
-    return valves
+        assert name not in valves_dict
+        valves_dict[name] = (rate, childrent)
+    itoa = sorted(valves_dict.keys())
+    atoi = {ch: idx for idx, ch in enumerate(itoa)}
+    weights = []
+    edges = []
+    for name in itoa:
+        flow_rate, children = valves_dict[name]
+        children = tuple(map(lambda x: atoi[x], children))
+        weights.append(flow_rate)
+        edges.append(children)
+    return tuple(weights), tuple(edges)
 
 
 def part2():
-    valves = parse()
+    weights, edges = parse()
 
     """
     contribution is how much pressure can you release total, starting from here, with these valves unavailable
@@ -153,53 +162,56 @@ def part2():
     """
 
     @cache
-    def dp(me, ellie, used: frozenset, time_left):
+    def dp(me=0, ellie=0, used: int = 0, time_left: int = 26):
         if time_left <= 1:
             return 0, ()
-        my_flow_rate, my_children = valves[me]
-        ellie_flow_rate, ellie_children = valves[ellie]
+        my_flow_rate, my_children = weights[me], edges[me]
+        ellie_flow_rate, ellie_children = weights[ellie], edges[ellie]
         best = 0
-        future = tuple()
-        if my_flow_rate > 0 and me not in used:
+        future = ((26 - time_left,0,0),)
+        if my_flow_rate > 0 and not used & 1 << me:
             my_contrib = my_flow_rate * (time_left - 1)
             assert my_contrib >= 0
-            my_used = used.union(frozenset([me]))
-            if ellie_flow_rate > 0 and ellie not in my_used:
+            my_used = used | 1 << me
+            if ellie_flow_rate > 0 and not my_used & 1 << ellie:
                 ellie_contrib = ellie_flow_rate * (time_left - 1)
                 assert ellie_contrib >= 0
-                tf2, futureish = dp(me, ellie, my_used.union(frozenset([ellie])), time_left - 1)
+                tf2, futureish = dp(me, ellie, my_used | 1 << ellie, time_left - 1)
                 tf2 += my_contrib + ellie_contrib
                 if tf2 > best:
                     best = tf2
-                    future = ((26 - time_left, "open", me, "open", ellie),) + futureish
+                    future = ((26 - time_left, -me, -ellie),) + futureish
 
             for ellie_child in ellie_children:
                 tf2, futureish = dp(me, ellie_child, my_used, time_left - 1)
                 tf2 += my_contrib
                 if tf2 > best:
                     best = tf2
-                    future = ((26 - time_left, "open", me, "to  ", ellie_child),) + futureish
+                    future = ((26 - time_left, -me, ellie_child),) + futureish
 
         for my_child in my_children:
-            if ellie_flow_rate > 0 and ellie not in used:
+            if ellie_flow_rate > 0 and not used & 1 << ellie:
                 ellie_contrib = ellie_flow_rate * (time_left - 1)
                 assert ellie_contrib >= 0
-                tf2, futureish = dp(my_child, ellie, used.union(frozenset([ellie])), time_left - 1)
+                tf2, futureish = dp(my_child, ellie, used | 1 << ellie, time_left - 1)
                 tf2 += ellie_contrib
                 if tf2 > best:
                     best = tf2
-                    future = ((26 - time_left, "to  ", my_child, "open", ellie),) + futureish
+                    future = ((26 - time_left, my_child, -ellie),) + futureish
 
             for ellie_child in ellie_children:
                 tf2, futureish = dp(my_child, ellie_child, used, time_left - 1)
                 if tf2 > best:
                     best = tf2
-                    future = ((26 - time_left, "to  ", my_child, "to  ", ellie_child),) + futureish
+                    future = ((26 - time_left, my_child, ellie_child),) + futureish
         return best, future
 
-    return dp("AA", "AA", frozenset(), 26)
+    for i in otqdm(range(27), percent_is_time=True, bars_is_time=True):
+        dp()
+    return dp()
 
 
 if __name__ == "__main__":
     # benchmark(part1)
-    benchmark(part2)
+    ans = benchmark(part2)
+    # submit(ans, 16, 2, 2022)
