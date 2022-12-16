@@ -51,11 +51,9 @@ def get_day(day: int, practice: str = "", *, year: int = 2022, override=False) -
         response = requests.get(
             f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies
         )
-        if response.status_code == 404:
-            raise ConnectionRefusedError("Too Early!")
-        else:
-            with open(filename, "w") as cache_file:
-                cache_file.write(response.text)
+        response.raise_for_status()
+        with open(filename, "w") as cache_file:
+            cache_file.write(response.text)
 
     with open(filename) as cache_file:
         return cache_file.read().rstrip("\n")
