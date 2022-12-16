@@ -166,11 +166,10 @@ def part2():
     @cache
     def dp(me=0, ellie=0, used: int = 0, time_left: int = 26):
         if time_left <= 1:
-            return 0, ()
+            return 0
         my_flow_rate, my_children = weights[me], edges[me]
         ellie_flow_rate, ellie_children = weights[ellie], edges[ellie]
         best = 0
-        future = ((26 - time_left,0,0),)
         if my_flow_rate > 0 and not used & 1 << me:
             my_contrib = my_flow_rate * (time_left - 1)
             assert my_contrib >= 0
@@ -178,36 +177,31 @@ def part2():
             if ellie_flow_rate > 0 and not my_used & 1 << ellie:
                 ellie_contrib = ellie_flow_rate * (time_left - 1)
                 assert ellie_contrib >= 0
-                tf2, futureish = dp(me, ellie, my_used | 1 << ellie, time_left - 1)
+                tf2 = dp(me, ellie, my_used | 1 << ellie, time_left - 1)
                 tf2 += my_contrib + ellie_contrib
                 if tf2 > best:
                     best = tf2
-                    future = ((26 - time_left, -me, -ellie),) + futureish
 
             for ellie_child in ellie_children:
-                tf2, futureish = dp(me, ellie_child, my_used, time_left - 1)
+                tf2= dp(me, ellie_child, my_used, time_left - 1)
                 tf2 += my_contrib
                 if tf2 > best:
                     best = tf2
-                    future = ((26 - time_left, -me, ellie_child),) + futureish
 
         for my_child in my_children:
             if ellie_flow_rate > 0 and not used & 1 << ellie:
                 ellie_contrib = ellie_flow_rate * (time_left - 1)
                 assert ellie_contrib >= 0
-                tf2, futureish = dp(my_child, ellie, used | 1 << ellie, time_left - 1)
+                tf2= dp(my_child, ellie, used | 1 << ellie, time_left - 1)
                 tf2 += ellie_contrib
                 if tf2 > best:
                     best = tf2
-                    future = ((26 - time_left, my_child, -ellie),) + futureish
 
             for ellie_child in ellie_children:
-                tf2, futureish = dp(my_child, ellie_child, used, time_left - 1)
+                tf2= dp(my_child, ellie_child, used, time_left - 1)
                 if tf2 > best:
                     best = tf2
-                    future = ((26 - time_left, my_child, ellie_child),) + futureish
-        return best, future
-
+        return best
     for i in otqdm(range(27), percent_is_time=True, bars_is_time=True):
         dp(time_left=i)
     return dp()
