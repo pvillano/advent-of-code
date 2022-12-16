@@ -25,14 +25,15 @@ def otqdm(
     min_iters=1,
     unit="it/s",
     n_bars=10,
-    percent_time=False,
-    percent_bars=False,
+    percent_is_time=False,
+    bars_is_time=False,
     len_iterator=None,
 ):
 
     last_print_t = start_time = time()
     last_print_n = 0
     n = 0
+    last_len = 0
     remaining = None
     n_syms = len(UTF) - 1
     if len_iterator is None:
@@ -78,21 +79,10 @@ def otqdm(
                 remaining_str = format_interval(remaining)
 
                 if len_iterator is not None:
-                    if percent_time:
-                        if remaining is None:
-                            percent = 0
-                        else:
-                            percent = elapsed / (remaining + elapsed)
-                    else:
-                        percent = n / len_iterator
-
-                    if percent_bars:
-                        if remaining is None:
-                            percent_b = 0
-                        else:
-                            percent_b = elapsed / (remaining + elapsed)
-                    else:
-                        percent_b = n / len_iterator
+                    time_percent = elapsed / (remaining + elapsed) if remaining is not None else 0
+                    count_percent = n / len_iterator
+                    percent = time_percent if percent_is_time else count_percent
+                    percent_b = time_percent if bars_is_time else count_percent
 
                     bar_length, frac_bar_length = divmod(
                         int(percent_b * n_bars * n_syms), n_syms
@@ -105,16 +95,18 @@ def otqdm(
                             + UTF[0] * (n_bars - bar_length - 1)
                         )
 
-                    print(
-                        f"{big_o_str} {percent * 100:3.0f}%|{bar_str}| {n}/{len_iterator} [{elapsed_str}/{remaining_str}, {rate:5.2f}{unit}]"
-                    )
+                    s = f"{big_o_str} {percent * 100:3.0f}%|{bar_str}| {n}/{len_iterator} [{elapsed_str}/{remaining_str}, {rate:5.2f}{unit}]"
+
                 else:
-                    print(
-                        f"{big_o_str} ??%|??????????| {n}/{'?'*len(str(n))} [{elapsed_str}/{remaining_str}, {rate:5.2f}{unit}]"
-                    )
+                    s = f"{big_o_str} ??%|??????????| {n}/{'?'*len(str(n))} [{elapsed_str}/{remaining_str}, {rate:5.2f}{unit}]"
+
+                len_s = len(s)
+                print('\r' + s + (' ' * max(last_len - len_s, 0)), end="")
+                last_len = len_s
 
                 last_print_n = n
                 last_print_t = now
+    print()
 
 
 if __name__ == "__main__":
