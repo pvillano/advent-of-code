@@ -162,7 +162,7 @@ def part2():
     """
 
     @cache
-    def dp(me=len(weights)-1, ellie=len(weights)-1, used: int = 0, time_left: int = 26):
+    def dp(me=len(weights) - 1, ellie=len(weights) - 1, used: int = 0, time_left: int = 26):
         if time_left <= 1:
             return 0
         my_flow_rate, my_children = weights[me], edges[me]
@@ -181,7 +181,7 @@ def part2():
                     best = tf2
 
             for ellie_child in ellie_children:
-                tf2= dp(me, ellie_child, my_used, time_left - 1)
+                tf2 = dp(me, ellie_child, my_used, time_left - 1)
                 tf2 += my_contrib
                 if tf2 > best:
                     best = tf2
@@ -190,22 +190,108 @@ def part2():
             if ellie_flow_rate > 0 and not used & 1 << ellie:
                 ellie_contrib = ellie_flow_rate * (time_left - 1)
                 assert ellie_contrib >= 0
-                tf2= dp(my_child, ellie, used | 1 << ellie, time_left - 1)
+                tf2 = dp(my_child, ellie, used | 1 << ellie, time_left - 1)
                 tf2 += ellie_contrib
                 if tf2 > best:
                     best = tf2
 
             for ellie_child in ellie_children:
-                tf2= dp(my_child, ellie_child, used, time_left - 1)
+                tf2 = dp(my_child, ellie_child, used, time_left - 1)
                 if tf2 > best:
                     best = tf2
         return best
+
     for i in otqdm(range(27), percent_is_time=True, bars_is_time=True):
         dp(time_left=i)
     return dp()
 
 
+def reparse(no_optimize=False) -> tuple[dict[str, list[str]], dict[tuple[str, str], int], dict[str, int]]:
+    edges: dict[str, list[str]] = defaultdict(list)
+    weights: dict[tuple[str, str], int] = dict()
+    flows: dict[str, int] = dict()
+    for line in lines:
+        name, rest = line.removeprefix("Valve ").split(" has flow rate=")
+        rate, rest = rest.split("; ")
+        rate = int(rate)
+        rest = rest.removeprefix("tunnel leads to valve ").removeprefix("tunnels lead to valves ")
+        children = rest.split(", ")
+        for child in children:
+            edges[name].append(child)
+            weights_key = min(name, child), max(child, name)
+            weights[weights_key] = 1
+            flows[name] = rate
+    if no_optimize:
+        return edges, weights, flows
+    for parent in tuple(flows.keys()):
+        if parent == "AA" or flows[parent] != 0:
+            continue
+        for child1, child2 in product(edges[parent], edges[parent]):
+            # no loops, only do once
+            if child1 <= child2:
+                continue
+            weights_key1 = min(parent, child1), max(parent, child1)
+            weights_key2 = min(parent, child2), max(parent, child2)
+            weights_key_new = min(child1, child2), max(child1, child2)
+            weight = weights[weights_key1] + weights[weights_key2]
+            if weights_key_new in weights:
+                weight = min(weights[weights_key_new], weight)
+            weights[weights_key_new] = weight
+            del weights[weights_key1]
+            del weights[weights_key2]
+        for reverse_edge in edges[parent]:
+            edges[reverse_edge].remove(parent)
+        del edges[parent]
+        del flows[parent]
+
+    return edges, weights, flows
+
+
+def part2v2():
+    edges, weights, flow_rates = reparse(no_optimize=True)
+
+    @cache
+    def dp(me="AA", ellie="AA", used=frozenset(), my_time_left=26, ellie_time_left=26):
+        best = 0
+        if my_time_left >= ellie_time_left:
+            if flow_rates[me] > 0 and me not in used and my_time_left > 1:
+                my_contrib = flow_rates[me] * (my_time_left - 1)
+                my_used = used.union([me])
+                total_flow = dp(me, ellie, my_used, my_time_left - 1, ellie_time_left)
+                total_flow += my_contrib
+                if total_flow > best:
+                    best = total_flow
+            for my_child in edges[me]:
+                weight_key = min(me, my_child), max(me, my_child)
+                weight = weights[weight_key]
+                assert weight > 0
+                if my_time_left - weight > 1:
+                    total_flow = dp(my_child, ellie, used, my_time_left - weight, ellie_time_left)
+                    if total_flow > best:
+                        best = total_flow
+        else:
+            if flow_rates[ellie] > 0 and ellie not in used and ellie_time_left > 1:
+                ellie_contrib = flow_rates[ellie] * (ellie_time_left - 1)
+                ellie_used = used.union([ellie])
+                total_flow = dp(me, ellie, ellie_used, my_time_left, ellie_time_left - 1)
+                total_flow += ellie_contrib
+                if total_flow > best:
+                    best = total_flow
+            for ellie_child in edges[ellie]:
+                weight_key = min(ellie, ellie_child), max(ellie, ellie_child)
+                weight = weights[weight_key]
+                assert weight > 0
+                if ellie_time_left-weight > 1:
+                    total_flow = dp(me, ellie_child, used, my_time_left, ellie_time_left-weight)
+                    if total_flow >= best:
+                        best = total_flow
+        return best
+
+    return dp()
+
+
+
 if __name__ == "__main__":
     # benchmark(part1)
-    ans = benchmark(part2)
-    # submit(ans, 16, 2, 2022)
+    # ans = benchmark(part2)
+    ans = benchmark(part2v2)
