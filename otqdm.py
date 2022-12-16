@@ -45,9 +45,9 @@ def otqdm(
     for obj in iterator:
         yield obj
         n += 1
-        if n - last_print_n >= min_iters:
+        if n - last_print_n >= min_iters or n == len_iterator:
             delta_t = time() - last_print_t
-            if delta_t >= min_interval:
+            if delta_t >= min_interval or n == len_iterator:
                 now = time()
                 elapsed = now - start_time
                 elapsed_str = format_interval(elapsed)

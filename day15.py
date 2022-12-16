@@ -1,5 +1,4 @@
-from tqdm import tqdm
-
+from otqdm import otqdm
 from utils import benchmark, debug_print, get_day, debug_print_sparse_grid, DEBUG
 
 test = """Sensor at x=2, y=18: closest beacon is at x=-2, y=15
@@ -45,7 +44,7 @@ def part1():
         ten = 10
     else:
         ten = 2000000
-    for sx, sy, sr in tqdm(sensors):
+    for sx, sy, sr in otqdm(sensors):
         remaining_r = sr - abs(sy - ten) + 1
         if remaining_r > 0:
             for dr in range(remaining_r):
@@ -100,7 +99,7 @@ def part2():
     #             return x * 4000000 + y
     tot = 0
     ans = None
-    for y in tqdm(range(max_incl + 1)):
+    for y in otqdm(range(max_incl + 1)):
         windows = []
         for sx, sy, sr in sensors:
             remaining_r = sr - abs(sy - y)
