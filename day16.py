@@ -137,15 +137,13 @@ def parse():
         # debug_print(f"{name=}, {rate=}, {childrent=}")
         assert name not in valves_dict
         valves_dict[name] = (rate, childrent)
-    itoa = sorted(valves_dict.keys(), key=lambda x: -valves_dict[x][0])
-    itoa.remove('AA')
-    itoa = ['AA'] + itoa
+    itoa = sorted(valves_dict.keys(), key=lambda x: (valves_dict[x][0], x), reverse=True)
     atoi = {ch: idx for idx, ch in enumerate(itoa)}
     weights = []
     edges = []
     for name in itoa:
         flow_rate, children = valves_dict[name]
-        children = tuple(map(lambda x: atoi[x], children))
+        children = tuple(sorted(map(lambda x: atoi[x], children)))
         weights.append(flow_rate)
         edges.append(children)
     return tuple(weights), tuple(edges)
@@ -164,7 +162,7 @@ def part2():
     """
 
     @cache
-    def dp(me=0, ellie=0, used: int = 0, time_left: int = 26):
+    def dp(me=len(weights)-1, ellie=len(weights)-1, used: int = 0, time_left: int = 26):
         if time_left <= 1:
             return 0
         my_flow_rate, my_children = weights[me], edges[me]
