@@ -182,6 +182,7 @@ def benchmark(part: Callable) -> None:
     else:
         pprint(ans)
         print(f"completed in {seconds:0.3f} seconds\n")
+    return ans
 
 
 def submit(answer, day, level, year):
