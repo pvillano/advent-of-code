@@ -170,18 +170,14 @@ def benchmark(part: Callable) -> None:
     :param part:
     :return: None
     """
+    file = sys.stderr if DEBUG else sys.stdout
+
     start_time = time.perf_counter_ns()
     ans = part()
     end_time = time.perf_counter_ns()
     seconds = (end_time - start_time) / 10 ** 9
-    if DEBUG:
-        pprint(ans, stream=sys.stderr)
-        print(
-            f"completed in {seconds:0.3f} seconds\n", file=sys.stderr, flush=True
-        )
-    else:
-        pprint(ans)
-        print(f"completed in {seconds:0.3f} seconds\n")
+    pprint(ans, stream=file)
+    print(f"completed in {seconds:0.3f} seconds\n", file=file, flush=True)
     return ans
 
 
