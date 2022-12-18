@@ -1,10 +1,13 @@
 import os
+import re
+from functools import cache
+from typing import Iterable
 
 import requests
 
 from .std import DEBUG
 
-__all__ = ["get_day"]
+__all__ = ["get_day", "extract_ints"]
 
 
 def get_day(day: int, practice: str = "", *, year: int = 2022, override=False) -> str:
@@ -24,3 +27,13 @@ def get_day(day: int, practice: str = "", *, year: int = 2022, override=False) -
 
     with open(filename) as cache_file:
         return cache_file.read().rstrip("\n")
+
+
+@cache
+def __int_extractor_regex():
+    return re.compile("([0-9]+)")
+
+
+def extract_ints(line: str) -> Iterable[int]:
+    str_list = __int_extractor_regex().findall(line)
+    return tuple(map(int, str_list))
