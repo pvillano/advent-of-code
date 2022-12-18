@@ -1,21 +1,8 @@
-import operator
-from collections import defaultdict, deque, Counter
-from copy import copy, deepcopy
-from functools import cache, lru_cache, partial, reduce
-from itertools import (
-    accumulate,
-    count,
-    cycle,
-    product,
-    permutations,
-    combinations,
-    pairwise,
-)
-from math import sqrt, floor, ceil, gcd, sin, cos, atan2
+from collections import deque
+from itertools import product, chain, starmap
 
-from otqdm import otqdm
-
-from utils import benchmark, debug_print, debug_print_grid, debug_print_sparse_grid, get_day, pipe, DEBUG
+from utils import benchmark, get_day
+from utils.itertools2 import rotations, transpose
 
 test = """2,2,2
 1,2,2
@@ -36,85 +23,67 @@ lines = raw.split("\n")
 
 
 def part1():
-    voxes = [tuple(map(int, line.split(','))) for line in lines]
-    sides = (
-        (1, 0, 0),
-        (0, 1, 0),
-        (0, 0, 1),
-        (-1, 0, 0),
-        (0, -1, 0),
-        (0, 0, -1),
-    )
-    voxes = set(voxes)
-    tot = 0
-    # debug_print(voxes)
-    for x, y, z in voxes:
-        for dx, dy, dz in sides:
-            xx, yy, zz = x + dx, y + dy, z + dz
-            if (xx, yy, zz) not in voxes:
-                tot += 1
-    return tot
+    voxels = set(tuple(map(int, line.split(','))) for line in lines)
+    sides = tuple(chain(rotations((1, 0, 0)), rotations((-1, 0, 0))))
+
+    def neighbours(xyz):
+        return [tuple(map(sum, zip(xyz, dxyz))) for dxyz in sides]
+
+    def open_faces_count(xyz):
+        return sum([x not in voxels for x in neighbours(xyz)])
+
+    return sum(map(open_faces_count, voxels))
 
 
 def part2():
-    voxes = [tuple(map(int, line.split(','))) for line in lines]
+    voxels = tuple(tuple(map(int, line.split(','))) for line in lines)
 
-    transposed = [[voxes[j][i] for j in range(len(voxes))] for i in range(3)]
-    mins = list(map(min, transposed))
-    maxes = list(map(max, transposed))
-    sides = (
-        (1, 0, 0),
-        (0, 1, 0),
-        (0, 0, 1),
-        (-1, 0, 0),
-        (0, -1, 0),
-        (0, 0, -1),
-    )
+    mins = tuple(map(min, transpose(voxels)))
+    maxes = tuple(map(max, transpose(voxels)))
+    voxels = set(voxels)
+    sides = tuple(chain(rotations((-1, 0, 0)), rotations((1, 0, 0))))
 
-    voxes_set = set(voxes)
+    def planify(i, bottom, top):
+        if i == -1:
+            return range(bottom, bottom + 1)
+        if i == 0:
+            return range(bottom, top + 1)
+        if i == 1:
+            return range(top, top + 1)
+
+    planes = [tuple(starmap(planify, zip(x, mins, maxes))) for x in sides]
+
     outside = set()
+    for plane in planes:
+        for voxel in product(*plane):
+            if voxel not in voxels:
+                outside.add(voxel)
+    todo = deque(outside)
+
+    def neighbours(voxel):
+        return [tuple(map(sum, zip(voxel, offset))) for offset in sides]
+
+    def in_bounds(voxel):
+        return all(starmap(lambda a, b, c: a <= b <= c, zip(mins, voxel, maxes)))
+
     explored = set()
-
-    assert tuple(mins) not in voxes_set
-    todo = deque()
-    for l1, l2, l3 in product(*[(range(mins[i], maxes[i] + 1), (mins[i], maxes[i] + 1)) for i in range(3)]):
-        if isinstance(l1, range) and isinstance(l2, range) and isinstance(l3, range):
-            continue
-        for x, y, z in product(l1, l2, l3):
-            if (x, y, z) not in voxes_set and (x, y, z) not in outside:
-                outside.add((x, y, z))
-                todo.append((x, y, z))
     while todo:
-        x, y, z = todo.pop()
-        if (x, y, z) in explored:
+        voxel = todo.pop()
+        if voxel in explored:
             continue
-        for dx, dy, dz in sides:
-            xx, yy, zz = x + dx, y + dy, z + dz
-            if ((xx, yy, zz) not in voxes_set
-                    and xx in range(mins[0], maxes[0] + 1)
-                    and yy in range(mins[1], maxes[1] + 1)
-                    and zz in range(mins[2], maxes[2] + 1)):
-                outside.add((xx, yy, zz))
-                todo.append((xx, yy, zz))
-        explored.add((x, y, z))
-
-    if DEBUG:
-        assert (2, 2, 5) not in outside
+        for neighbour in neighbours(voxel):
+            if neighbour not in voxels and in_bounds(neighbour):
+                outside.add(neighbour)
+                todo.append(neighbour)
+        explored.add(voxel)
 
     area = 0
-    cube_count = 0
-    for x in range(mins[0], maxes[0] + 1):
-        for y in range(mins[1], maxes[1] + 1):
-            for z in range(mins[2], maxes[2] + 1):
-                if (x, y, z) in outside:
-                    continue
-                for dx, dy, dz in sides:
-                    xx, yy, zz = x + dx, y + dy, z + dz
-                    if (xx not in range(mins[0], maxes[0] + 1)
-                            or yy not in range(mins[1], maxes[1] + 1)
-                            or zz not in range(mins[2], maxes[2] + 1)
-                            or (xx, yy, zz) in outside):
-                        area += 1
+    for voxel in product(*[range(start, stop + 1) for start, stop in zip(mins, maxes)]):
+        if voxel in outside:
+            continue
+        for neighbour in neighbours(voxel):
+            if not in_bounds(neighbour) or neighbour in outside:
+                area += 1
     return area
 
 
