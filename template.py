@@ -15,7 +15,7 @@ from math import sqrt, floor, ceil, gcd, sin, cos, atan2
 
 from otqdm import otqdm
 
-from utils import benchmark, debug_print, get_day, pipe
+from utils import benchmark, debug_print, debug_print_grid, debug_print_sparse_grid, get_day, pipe
 
 test = """"""
 
