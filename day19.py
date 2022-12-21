@@ -66,16 +66,10 @@ def build_list_iterator(blueprint: np.ndarray, resources: np.ndarray):
             if build_list[borrow_digit] > 0:
                 build_list[borrow_digit] -= 1
                 break
-        regrew = False
         for j in reversed(range(borrow_digit)):
             while build_within_budget(blueprint, one_hot(j) + build_list, resources):
                 build_list[j] += 1
-                regrew = True
-        # if not regrew:
-        #     defer.append(tuple(build_list))
-        # else:
         yield tuple(build_list)
-    # yield from defer
 
 
 def benchmark_blueprint(blueprint):
