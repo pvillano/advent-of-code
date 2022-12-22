@@ -62,12 +62,14 @@ def benchmark(part: Callable) -> None:
     """
     file = sys.stderr if DEBUG else sys.stdout
 
+    datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%p")
+    print("Started", datetime.datetime.now().strftime("%I:%M%p"), file=file, flush=True)
     start_time = time.perf_counter_ns()
     ans = part()
     end_time = time.perf_counter_ns()
     seconds = (end_time - start_time) / 10 ** 9
     pprint(ans, stream=file)
-    print(f"completed in {seconds:0.3f} seconds\n", file=file, flush=True)
+    print(f"Completed in {seconds:0.3f} seconds.\n", file=file, flush=True)
     return ans
 
 
