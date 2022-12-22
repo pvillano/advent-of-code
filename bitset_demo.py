@@ -176,3 +176,13 @@ if __name__ == "__main__":
     benchmark(part2a)
     print("part 2 bitset")
     benchmark(part2b)
+
+"""
+part 2 frozenset
+2752
+completed in 322.676 seconds
+
+part 2 bitset
+2752
+completed in 428.123 seconds
+"""
