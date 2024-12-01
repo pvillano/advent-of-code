@@ -1,65 +1,44 @@
 from collections import Counter
 
-from utils import benchmark, get_day, test
+from utils import benchmark, get_day, test, extract_ints
+from utils.grids import transpose
 
 
 def parse(raw: str):
-    ret = []
-    for line in raw.splitlines():
-        ret.append(line)
-    return ret
+    return list(map(extract_ints, raw.splitlines()))
 
 ink = "1   2"
 def part1(raw: str):
-    ll, rr = [], []
-    for line in ink.split('\n'):
-        l, r = line.split("   ")
-        l, r = int(l), int(r)
-        ll.append(l)
-        rr.append(r)
-    ll.sort()
-    rr.sort()
-    s = 0
-    for l,r in zip(ll,rr):
-        s += abs(l - r)
-    print(s)
+    left_list, right_list = map(sorted, transpose(parse(raw)))
+    return sum([abs(left-right) for left,right in zip(left_list,right_list)])
 
 
 def part2(raw: str):
-    ll, rr = [], []
-    for line in ink.split('\n'):
-        l, r = line.split("   ")
-        l, r = int(l), int(r)
-        ll.append(l)
-        rr.append(r)
-    ll.sort()
-    rr.sort()
-    rr = Counter(rr)
-    s = 0
-    for l in ll:
-        s += l * rr[l]
-    print(s)
+    left_list, right_list = map(sorted, transpose(parse(raw)))
+    counts = Counter(right_list)
+    return sum(left * counts[left] for left in left_list)
 
 
-test1 = """"""
+test1 = """3   4
+4   3
+2   5
+1   3
+3   9
+3   3"""
 
-expected1 = None
+expected1 = 11
 
 test2 = test1
-expected2 = None
+expected2 = 31
 
 
-print(part1(test1))
-print(part2(test1))
+def main():
+    test(part1, test1, expected1)
+    raw = get_day(1)
+    benchmark(part1, raw)
+    test(part2, test2, expected2)
+    benchmark(part2, raw)
 
 
-# def main():
-#     test(part1, test1, expected1)
-#     raw = get_day(1, override=True)
-#     benchmark(part1, raw)
-#     test(part2, test2, expected2)
-#     benchmark(part2, raw)
-#
-#
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
