@@ -40,11 +40,12 @@ def test(func: Callable, data, expected):
     end_time = time.perf_counter_ns()
     seconds = (end_time - start_time) / 10 ** 9
     if not ans == expected:
-        print(f"FAILED in {seconds:0.3f} seconds", file=out_stream, flush=DEBUG)
-        print("Expected:", expected, file=out_stream, flush=True)
-        print("Actual:  ", ans, file=out_stream, flush=True)
-        exit(1)
-    print(f"Passed in {seconds:0.3f} seconds\n", file=out_stream, flush=DEBUG)
+        print(f"FAILED in {seconds:0.3f} seconds", file=out_stream)
+        print("Expected:", expected, file=out_stream)
+        print("Actual:  ", ans, file=out_stream)
+        print(file=out_stream, flush=DEBUG)
+    else:
+        print(f"Passed in {seconds:0.3f} seconds\n", file=out_stream, flush=DEBUG)
 
 
 def benchmark(func: Callable, *args, **kwargs) -> Any:
