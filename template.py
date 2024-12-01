@@ -1,5 +1,5 @@
-import os
 import datetime
+import os
 
 with open("template.py") as template_file:
     eric_time = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=-5), "EST"))
@@ -53,7 +53,7 @@ expected2 = None
 
 def main():
     test(part1, test1, expected1)
-    raw = get_day(DAYNUMBER, override=True)
+    raw = get_day(1)
     benchmark(part1, raw)
     test(part2, test2, expected2)
     benchmark(part2, raw)
