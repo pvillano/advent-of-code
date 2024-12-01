@@ -1,25 +1,27 @@
 __all__ = ["get_day", "extract_ints"]
 
+import datetime
 import os
 import re
 from functools import cache
-from collections.abc import Iterable
 
 import requests
 
-from .std import DEBUG
+THIS_YEAR = datetime.datetime.today().year
 
 
-def get_day(day: int, practice: str = "", *, year: int = 2023, override=False) -> str:
-    if DEBUG and not override:
-        return practice.rstrip("\n")
+def get_day(day: int) -> str:
+    """
+    :param day:
+    :return:
+    """
 
     filename = f"input{day:02d}.txt"
     if not os.path.exists(filename):
         with open(".token", "r") as token_file:
             cookies = {"session": token_file.read()}
         response = requests.get(
-            f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies
+            f"https://adventofcode.com/{THIS_YEAR}/day/{day}/input", cookies=cookies
         )
         response.raise_for_status()
         with open(filename, "w") as cache_file:
