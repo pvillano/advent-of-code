@@ -7,7 +7,6 @@ from utils.grids import transpose
 def parse(raw: str):
     return list(map(extract_ints, raw.splitlines()))
 
-ink = "1   2"
 def part1(raw: str):
     left_list, right_list = map(sorted, transpose(parse(raw)))
     return sum([abs(left-right) for left,right in zip(left_list,right_list)])
