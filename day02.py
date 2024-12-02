@@ -8,16 +8,6 @@ def parse(raw: str):
     return ret
 
 
-def part1(raw: str):
-    reports = parse(raw)
-    ssafe = 0
-    for report in reports:
-        if any([a<b for a,b in zip(report, report[1:])]) and any([a>b for a,b in zip(report, report[1:])]):
-            continue # unsafe
-        if all([1<=abs(a-b)<=3 for a,b in zip(report, report[1:])]):
-            ssafe += 1
-    return ssafe
-
 def safe(report):
     if any([a<b for a,b in zip(report, report[1:])]) and any([a>b for a,b in zip(report, report[1:])]):
         return False
@@ -25,19 +15,28 @@ def safe(report):
         return True
     return False
 
-def part2(raw: str):
+
+def part1(raw: str):
     reports = parse(raw)
-    ssafe = 0
+    safe_count = 0
     for report in reports:
         if safe(report):
-            ssafe += 1
+            safe_count += 1
+    return safe_count
+
+def part2(raw: str):
+    reports = parse(raw)
+    safe_count = 0
+    for report in reports:
+        if safe(report):
+            safe_count += 1
             continue
         for i in range(len(report)):
-            peport = [x for idx, x in enumerate(report) if idx != i]
-            if safe(peport):
-                ssafe += 1
+            trimmed = [x for idx, x in enumerate(report) if idx != i]
+            if safe(trimmed):
+                safe_count += 1
                 break
-    return ssafe
+    return safe_count
 
 
 test1 = """7 6 4 2 1
