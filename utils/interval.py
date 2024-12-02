@@ -1,3 +1,4 @@
+import collections
 from collections.abc import Iterable
 
 
@@ -5,60 +6,43 @@ def range_overlaps(a: range, b: range):
     return a.start < b.stop and b.start < a.stop
 
 
-class IntervalSet:
+class IntervalSet(collections.abc.Set):
     """
     Can be constructed from
-    a list
+    a list of ranges [a,b)
 
     invariants:
     __intervals is a list of non-overlapping ranges
     """
-    __intervals: list[range]
+    __intervals: list[tuple[int, int]]
 
-    def __init__(self, iterable: Iterable[range] = None):
-        if iterable is None:
-            iterable = ()
-        self.__intervals = list(iterable)
+    def __init__(self, __iterable: Iterable[tuple[int, int]] = None):
+        if __iterable is None:
+            self.__intervals = []
+            return
+        self.__intervals = list(__iterable)
         self.__normalize()
 
     def __normalize(self):
         if len(self.__intervals) == 0:
             return
-        first: range
-        rest: list[range]
-        first, *rest = sorted(self.__intervals, key=lambda x: x.start)
-        self.__intervals = [first]
-        for r in rest:
-            if r.start in self.__intervals[-1]:
-                stop = max(self.__intervals[-1].stop, r.stop)
-                self.__intervals[-1] = range(self.__intervals[-1].start, stop)
+        self.__intervals.sort()
+        new = [self.__intervals[0]]
+        for r in self.__intervals[1:]:
+            start, end = new[-1]
+            if start <= r[0] < end:
+                stop = max(new[-1][1], r[1])
+                new[-1] = (new[-1][0], stop)
+        self.__intervals = new
 
-    def __contains__(self, item):
-        raise NotImplementedError()
+    def __contains__(self, item: int):
+        for start, end in self.__intervals:
+            if start <= item < end:
+                return True
+        return False
 
     def __iter__(self):
-        raise NotImplementedError()
+        return iter(self.__intervals)
 
     def __len__(self):
-        raise NotImplementedError()
-
-    def add(self, value):
-        raise NotImplementedError()
-
-    def discard(self, value):
-        raise NotImplementedError()
-
-    def __eq__(self, other):
-        raise NotImplementedError()
-
-    def __and__(self, other):
-        raise NotImplementedError()
-
-    def __or__(self, other):
-        raise NotImplementedError()
-
-    def __sub__(self, other):
-        raise NotImplementedError()
-
-    def __xor__(self, other):
-        raise NotImplementedError()
+        return len(self.__intervals)
