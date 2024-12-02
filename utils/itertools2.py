@@ -1,4 +1,4 @@
-__all__ = ["rotations"]
+__all__ = ["rotations", "flatten"]
 
 from itertools import chain
 from collections.abc import Iterable
@@ -9,6 +9,9 @@ def rotations(iterable: Iterable):
     iterable = tuple(iterable)
     for idx in range(len(iterable)):
         yield tuple(chain(iterable[-idx:], iterable[:-idx]))
+
+
+flatten = chain.from_iterable
 
 
 def main():
