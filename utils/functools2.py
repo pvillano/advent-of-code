@@ -1,3 +1,5 @@
+__all__ = ["pipe"]
+
 from collections.abc import Callable
 
 

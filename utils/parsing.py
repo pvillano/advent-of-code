@@ -30,7 +30,6 @@ def get_day(day: int) -> str:
         return cache_file.read().rstrip("\n")
 
 
-
 def extract_ints(line: str) -> tuple[int, ...]:
     str_list = re.findall("(-?[0-9]+)", line)
     return tuple(map(int, str_list))

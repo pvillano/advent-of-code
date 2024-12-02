@@ -1,7 +1,6 @@
 __all__ = [
     "benchmark",
     "DEBUG",
-    "flatten",
     "test"
 ]
 
@@ -9,15 +8,12 @@ import datetime
 import sys
 import time
 from collections.abc import Callable
-from itertools import chain
 from pprint import pprint as not_my_pp
 from typing import Any
 
 has_trace = hasattr(sys, 'gettrace') and sys.gettrace() is not None
 has_breakpoint = sys.breakpointhook.__module__ != "sys"
 DEBUG = has_trace or has_breakpoint
-
-flatten = chain.from_iterable
 
 
 def pprint(object_, stream=None, indent=1, width=80, depth=None, *,
