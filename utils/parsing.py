@@ -3,7 +3,6 @@ __all__ = ["get_day", "extract_ints"]
 import datetime
 import os
 import re
-from functools import cache
 
 import requests
 
@@ -31,11 +30,7 @@ def get_day(day: int) -> str:
         return cache_file.read().rstrip("\n")
 
 
-@cache
-def __int_extractor_regex():
-    return re.compile("(-?[0-9]+)")
-
 
 def extract_ints(line: str) -> tuple[int, ...]:
-    str_list = __int_extractor_regex().findall(line)
+    str_list = re.findall("(-?[0-9]+)", line)
     return tuple(map(int, str_list))
