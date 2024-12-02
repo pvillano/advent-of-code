@@ -1,30 +1,47 @@
 __all__ = [
     "benchmark",
     "DEBUG",
+    "get_day",
     "test"
 ]
 
 import datetime
+import os
 import sys
 import time
 from collections.abc import Callable
-from pprint import pprint as not_my_pp
 from typing import Any
+
+import requests
+
+from utils.printing import pprint
 
 has_trace = hasattr(sys, 'gettrace') and sys.gettrace() is not None
 has_breakpoint = sys.breakpointhook.__module__ != "sys"
 DEBUG = has_trace or has_breakpoint
 
+THIS_YEAR = datetime.datetime.today().year
 
-def pprint(object_, stream=None, indent=1, width=80, depth=None, *,
-           compact=False, sort_dicts=True, underscore_numbers=False):
-    if isinstance(object_, str):
-        print('"""', file=stream)
-        print(object_.replace("\\", "\\\\"), file=stream)
-        print('"""', file=stream)
-    else:
-        not_my_pp(object_, stream, indent, width, depth, compact=compact, sort_dicts=sort_dicts,
-                  underscore_numbers=underscore_numbers)
+
+def get_day(day: int) -> str:
+    """
+    :param day:
+    :return:
+    """
+
+    filename = f"input{day:02d}.txt"
+    if not os.path.exists(filename):
+        with open(".token", "r") as token_file:
+            cookies = {"session": token_file.read()}
+        response = requests.get(
+            f"https://adventofcode.com/{THIS_YEAR}/day/{day}/input", cookies=cookies
+        )
+        response.raise_for_status()
+        with open(filename, "w") as cache_file:
+            cache_file.write(response.text)
+
+    with open(filename) as cache_file:
+        return cache_file.read().rstrip("\n")
 
 
 def test(func: Callable, data, expected):

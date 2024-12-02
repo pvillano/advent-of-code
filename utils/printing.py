@@ -4,11 +4,12 @@ import inspect
 import sys
 from collections.abc import Iterable
 from itertools import chain
+from pprint import pprint as not_my_pp
 from typing import Any
 
 import numpy as np
 
-from .std import DEBUG
+from .advent import DEBUG
 
 
 def debug_print(*args, override=False, **kwargs) -> None:
@@ -115,3 +116,14 @@ def debug_print_sparse_grid(
                     print("." * max_w, end="", file=sys.stderr)
             print(file=sys.stderr, flush=True)
     print(file=sys.stderr, flush=True)
+
+
+def pprint(object_, stream=None, indent=1, width=80, depth=None, *,
+           compact=False, sort_dicts=True, underscore_numbers=False):
+    if isinstance(object_, str):
+        print('"""', file=stream)
+        print(object_.replace("\\", "\\\\"), file=stream)
+        print('"""', file=stream)
+    else:
+        not_my_pp(object_, stream, indent, width, depth, compact=compact, sort_dicts=sort_dicts,
+                  underscore_numbers=underscore_numbers)

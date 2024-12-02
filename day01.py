@@ -1,7 +1,8 @@
 from collections import Counter
 
-from utils import benchmark, get_day, test, extract_ints
+from utils import benchmark, get_day, test
 from utils.grids import transpose
+from utils.parsing import extract_ints
 
 
 def parse(raw: str):
