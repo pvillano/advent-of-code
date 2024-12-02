@@ -8,7 +8,7 @@ with open("template.py") as template_file:
         up_to_day = 1
     elif eric_time.month == 12:
         # only generate the next day's template if it is close to midnight
-        if eric_time.hour < 23:
+        if eric_time.hour < 20:
             up_to_day = eric_time.day
         else:
             up_to_day = eric_time.day + 1
@@ -53,7 +53,7 @@ expected2 = None
 
 def main():
     test(part1, test1, expected1)
-    raw = get_day(1)
+    raw = get_day(DAYNUMBER)
     benchmark(part1, raw)
     test(part2, test2, expected2)
     benchmark(part2, raw)
