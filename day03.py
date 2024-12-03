@@ -19,7 +19,23 @@ def part2(raw: str):
             if doing:
                 x, y = map(int, [x, y])
                 s += x * y
+    return s
 
+
+def part2second_solution(raw: str):
+    s = 0
+    doing = True
+    do_matches = list(re.finditer("(do|don't)\\(\\)", raw))
+    mul_matches = list(re.finditer("mul\\((-?[0-9]+),(-?[0-9]+)\\)", raw))
+    matches = sorted(do_matches + mul_matches, key=lambda x: x.start())
+    for match in matches:
+        if match.groups()[0] == 'do':
+            doing = True
+        elif match.groups()[0] == "don't":
+            doing = False
+        elif doing:
+            x, y = map(int, match.groups())
+            s += x * y
     return s
 
 
@@ -37,6 +53,8 @@ def main():
     benchmark(part1, raw)
     test(part2, test2, expected2)
     benchmark(part2, raw)
+    test(part2second_solution, test2, expected2)
+    benchmark(part2second_solution, raw)
 
 
 if __name__ == "__main__":
