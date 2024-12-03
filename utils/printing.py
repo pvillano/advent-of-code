@@ -1,4 +1,4 @@
-__all__ = ["debug_print", "debug_print_grid", "debug_print_sparse_grid", "debug_print_recursive"]
+__all__ = ["debug_print", "debug_print_grid", "debug_print_sparse_grid", "debug_print_recursive", "pprint"]
 
 import inspect
 import sys

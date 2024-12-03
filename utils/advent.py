@@ -14,7 +14,7 @@ from typing import Any
 
 import requests
 
-from utils.printing import pprint
+from . import printing
 
 has_trace = hasattr(sys, 'gettrace') and sys.gettrace() is not None
 has_breakpoint = sys.breakpointhook.__module__ != "sys"
@@ -74,6 +74,6 @@ def benchmark(func: Callable, *args, **kwargs) -> Any:
     ans = func(*args, **kwargs)
     end_time = time.perf_counter_ns()
     seconds = (end_time - start_time) / 10 ** 9
-    pprint(ans, stream=out_stream)
+    printing.pprint(ans, stream=out_stream)
     print(f"Completed in {seconds:0.3f} seconds.\n", file=out_stream, flush=True)
     return ans
