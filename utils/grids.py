@@ -1,13 +1,17 @@
 __all__ = [
-    'NEWS_RC',
-    'NEWS_XY',
-    'rotate_clockwise',
-    'rotate_counterclockwise',
-    'transpose',
+    "NEWS_RC",
+    "NEWS_XY",
+    "NESW_RC",
+    "NESW_XY",
+    "rotate_clockwise",
+    "rotate_counterclockwise",
+    "transpose",
 ]
 
 NEWS_RC = ((-1, 0), (0, 1), (0, -1), (1, 0))
 NEWS_XY = ((0, 1), (1, 0), (-1, 0), (0, -1))
+NESW_RC = ((-1, 0), (0, 1), (1, 0), (0, -1))
+NESW_XY = ((0, 1), (1, 0), (0, -1), (-1, 0))
 
 
 def transpose(iterable):
