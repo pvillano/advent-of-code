@@ -53,7 +53,7 @@ def test(func: Callable, data, expected):
     end_time = time.perf_counter_ns()
     seconds = (end_time - start_time) / 10 ** 9
     if not ans == expected:
-        print(f"FAILED in {seconds:0.3f} seconds", file=out_stream)
+        print(f"FAILED in {seconds:0.3f} seconds FAILED FAILED FAILED FAILED FAILED FAILED FAILED FAILED FAILED", file=out_stream)
         print("Expected:", expected, file=out_stream)
         print("Actual:  ", ans, file=out_stream)
         print(file=out_stream, flush=DEBUG)
