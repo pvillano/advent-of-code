@@ -5,12 +5,13 @@ from utils import benchmark, get_day, test
 
 
 def parse(raw: str):
-    ret = defaultdict(list)
-    for r, row in enumerate(raw.splitlines()):
+    atlas = defaultdict(list)
+    lines = raw.splitlines()
+    for r, row in enumerate(lines):
         for c, char in enumerate(row):
             if char != '.':
-                ret[char].append((r,c))
-    return ret, len(raw.splitlines()),len(raw.splitlines()[0])
+                atlas[char].append((r, c))
+    return atlas, len(lines), len(lines[0])
 
 
 def part1(raw: str):
@@ -44,18 +45,16 @@ def part2(raw: str):
             dr = r2 - r1
             dc = c2 - c1
             for i in count():
-                r,c = r1 + i * dr, c1 + i  * dc
+                r, c = r1 + i * dr, c1 + i * dc
                 if r not in range(height) or c not in range(width):
                     break
-                sparse.add((r,c))
-            for i in count(0,-1):
-                r,c = r1 + i * dr, c1 + i  * dc
+                sparse.add((r, c))
+            for i in count(0, -1):
+                r, c = r1 + i * dr, c1 + i * dc
                 if r not in range(height) or c not in range(width):
                     break
-                sparse.add((r,c))
+                sparse.add((r, c))
     return len(sparse)
-
-
 
 
 test1 = """............
