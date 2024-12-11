@@ -1,7 +1,6 @@
-import trio
-
-from utils.parallel import parallel_map
+from itertools import starmap
 from utils import benchmark, get_day, test
+from utils.parallel import starmap16
 
 
 def parse(raw: str):
@@ -101,7 +100,7 @@ def part2parallel(raw: str):
             new_lines[i] =  lines[i][:j] + '#' + lines[i][j+1:]
             inputs.append([new_lines,r,c])
 
-    return sum(trio.run(parallel_map, loops, inputs))
+    return sum(starmap16(loops, inputs))
 
 def loops(lines, r, c):
     rows, columns = len(lines), len(lines[0])
