@@ -1,60 +1,22 @@
 from utils import test, get_day, benchmark
 from utils.parsing import extract_ints
-from utils.printing import debug_print
-
-ACOST = 3
-BCOST = 1
 
 
-def parse(raw: str):
+def part1(raw: str, d=0):
     games = raw.split("\n\n")
-    l = []
+    s = 0
     for g in games:
         ax, ay, bx, by, px, py = extract_ints(g)
-        l.append((ax, ay, bx, by, px, py))
-    return l
-
-
-def part1(raw: str):
-    games = parse(raw)
-    s = 0
-    for idx, (ax, ay, bx, by, px, py) in enumerate(games):
-        a, b, c, d = ax, bx, ay, by
-
-        invdet = a * d - b * c
-        sola, solb = d * px + -b * py, -c * px + a * py
-        sola /= invdet
-        solb /= invdet
-        debug_print(f"{sola=} {solb=}")
-        if sola % 1 == 0 and solb % 1 == 0:
-            s += sola * ACOST + solb * BCOST
+        px, py = px + d, py + d
+        inv_det = ax * by - bx * ay
+        a, b = by * px + -bx * py, -ay * px + ax * py
+        if a % inv_det == 0 and b % inv_det == 0:
+            s += 3 * a // inv_det + b // inv_det
     return s
 
-
-def parse2(raw: str):
-    games = raw.split("\n\n")
-    l = []
-    for g in games:
-        ax, ay, bx, by, px, py = extract_ints(g)
-        px += 10000000000000
-        py += 10000000000000
-        l.append((ax, ay, bx, by, px, py))
-    return l
 
 def part2(raw: str):
-    games = parse2(raw)
-    s = 0
-    for idx, (ax, ay, bx, by, px, py) in enumerate(games):
-        a, b, c, d = ax, bx, ay, by
-
-        invdet = a * d - b * c
-        sola, solb = d * px + -b * py, -c * px + a * py
-        sola /= invdet
-        solb /= invdet
-        debug_print(f"{sola=} {solb=}")
-        if sola % 1 == 0 and solb % 1 == 0:
-            s += sola * ACOST + solb * BCOST
-    return s
+    return part1(raw, 10000000000000)
 
 
 test1 = """Button A: X+94, Y+34
