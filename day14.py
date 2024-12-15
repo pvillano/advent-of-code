@@ -33,6 +33,7 @@ def part2(raw: str):
     lines = parse(raw)
     width, height = 101, 103
     best_lonelies = len(lines)
+    best_t = 0
     for t in range(width * height):
         positions = {((px + vx * t) % width, (py + vy * t) % height): '#' for px, py, vx, vy in lines}
         lonelies = 0
@@ -45,10 +46,9 @@ def part2(raw: str):
             if not friend:
                 lonelies += 1
         if lonelies < best_lonelies:
-            debug_print(t, override=True)
-            debug_print_sparse_grid(positions, override=True)
-            debug_print(t, override=True)
             best_lonelies = lonelies
+            best_t = t
+    return best_t
 
 
 test1 = """p=0,4 v=3,-3
@@ -64,7 +64,7 @@ p=7,3 v=-1,2
 p=2,4 v=2,-3
 p=9,5 v=-3,-3"""
 
-expected1 = None
+expected1 = 12
 
 test2 = test1
 expected2 = None
@@ -73,7 +73,6 @@ def main():
     test(part1, test1, expected1)
     raw = get_day(14)
     benchmark(part1, raw)
-    # test(part2, test2, expected2)
     benchmark(part2, raw)
 
 if __name__ == "__main__":
