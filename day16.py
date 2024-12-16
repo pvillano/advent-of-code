@@ -2,7 +2,7 @@ from collections import deque
 from math import inf
 
 from utils import benchmark, get_day, test
-from utils.grids import NESW_RC
+from utils.grids import NESW_RC, grid_index
 from utils.printing import debug_print
 
 
@@ -16,28 +16,8 @@ def parse(raw: str):
 def lch(raw: str):
     lines = parse(raw)
     height, width = len(lines), len(lines[0])
-    breaker = False
-    for start_r, row in enumerate(lines):
-        for start_c, ch in enumerate(row):
-            if ch == 'S':
-                breaker = True
-                break
-        if breaker:
-            break
-    assert start_r
-    assert start_c
-
-    breaker = False
-    lines = parse(raw)
-    for end_r, row in enumerate(lines):
-        for end_c, ch in enumerate(row):
-            if ch == 'E':
-                breaker = True
-                break
-        if breaker:
-            break
-    assert end_r
-    assert end_c
+    start_r, start_c = grid_index(lines, 'S')
+    end_r, end_c = grid_index(lines, 'E')
 
     least_cost_here = [[[inf] * 4 for _ in range(width)] for _ in range(height)]
     least_cost_here[start_r][start_c][1] = 0
