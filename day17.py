@@ -1,4 +1,5 @@
 import sys
+from dataclasses import dataclass
 from itertools import count
 
 from tqdm import tqdm
@@ -6,6 +7,7 @@ from tqdm import tqdm
 from utils import benchmark, get_day, test
 from utils.parallel import starmap16
 from utils.parsing import extract_ints
+from utils.printing import debug_print
 
 
 def parse(raw: str):
@@ -98,79 +100,79 @@ def work(registers, program, a_iter):
 #     registers, program = parse(raw)
 #     return starmap16(work, [[registers, program, count(offset, 16)] for offset in range(16)])
 
-def part2(raw: str):
+@dataclass
+class Shifted:
+    value: str
+    offset: int
+    def __str__(self):
+        return f"{self.value}[{self.offset}:]"
+
+def part22(raw: str):
     old_registers, program = parse(raw)
-    old_registers['A'] = 'a'
+    jump_conditions = []
+    out_conditions = []
     ip = 0
-    out = []
-    for a in tqdm(count()):
-        registers = dict(old_registers)
-        if raw == test2:
-            if not ((a // (1 << 3)) != 0):
+    registers = dict(old_registers)
+    registers['A'] = Shifted('a', 0)
+    while ip in range(len(program)):
+        op = program[ip]
+        literal = program[ip + 1]
+        combo = [0, 1, 2, 3, registers['A'], registers['B'], registers['C']][literal]
+        match op:
+            case 0:
+                assert combo == 3
+                if isinstance(registers['A'], Shifted):
+                    registers['A'] = Shifted(registers['A'].value, registers['A'].offset + 1)
+                else:
+                    registers['A'] = f"({registers['A']} << {combo})"
+            case 1:
+                registers['B'] = f"({registers['B']} ^ {literal})"
+            case 2:
+                if isinstance(combo, Shifted):
+                    registers['B'] = f"{combo.value}[{combo.offset}]"
+                else:
+                    registers['B'] = f"{combo}[0]"
+            case 3:
+                if len(out_conditions) < len(program):
+                    jump_conditions.append(f"{registers['A']} != 0")
+                ip = literal
                 continue
-            if not (((a // (1 << 3)) % 8) == program[0]):
-                continue
-            if not ((((a // (1 << 3)) // (1 << 3)) % 8) == program[1]):
-                continue
-            if not (((((a // (1 << 3)) // (1 << 3)) // (1 << 3)) % 8) == program[2]):
-                continue
-            if not ((((((a // (1 << 3)) // (1 << 3)) // (1 << 3)) // (1 << 3)) % 8) == program[3]):
-                continue
-            if not (((((((a // (1 << 3)) // (1 << 3)) // (1 << 3)) // (1 << 3)) // (1 << 3)) % 8) == program[4]):
-                continue
-        else:
-            if not ((((((a % 8) ^ 2) ^ (a // (1 << ((a % 8) ^ 2)))) ^ 3) % 8) == program[0]):
-                continue
-            if not (((((((a // (1 << 3)) % 8) ^ 2) ^ ((a // (1 << 3)) // (1 << (((a // (1 << 3)) % 8) ^ 2)))) ^ 3) % 8) == program[1]):
-                continue
-            if not ((((((((a // (1 << 3)) // (1 << 3)) % 8) ^ 2) ^ (((a // (1 << 3)) // (1 << 3)) // (1 << ((((a // (1 << 3)) // (1 << 3)) % 8) ^ 2)))) ^ 3) % 8) == program[2]):
-                continue
-            if not (((((((((a // (1 << 3)) // (1 << 3)) // (1 << 3)) % 8) ^ 2) ^ ((((a // (1 << 3)) // (1 << 3)) // (1 << 3)) // (1 << (((((a // (1 << 3)) // (1 << 3)) // (1 << 3)) % 8) ^ 2)))) ^ 3) % 8) == program[3]):
-                continue
-            if not True:
-                continue
-            if not True:
-                continue
-            if not True:
-                continue
-            if not True:
-                continue
-        while ip in range(len(program)):
-            op = program[ip]
-            literal = program[ip + 1]
-            combo = [0, 1, 2, 3, registers['A'], registers['B'], registers['C']][literal]
-            match op:
-                case 0:
-                    registers['A'] = f"({registers['A']} // (1 << {combo}))"
-                case 1:
-                    registers['B'] = f"({registers['B']} ^ {literal})"
-                case 2:
-                    registers['B'] = f"({combo} % 8)"
-                case 3:
-                    if eval(registers['A'], {'a': a}) != 0:
-                        ip = literal
-                        continue
-                    elif len(out) < len(program):
-                        # jump skipped when needed
-                        print("missed condition:", f"({registers['A']} != 0)")
-                        sys.exit(1)
-                case 4:
-                    registers['B'] = f"({registers['B']} ^ {registers['C']})"
-                case 5:
-                    out.append(f"({combo} % 8)")
-                    if eval(out[-1], {'a': a}) != program[len(out) - 1]:
-                        print("missed condition:", f"({out[-1]} == program[{len(out)-1}])")
-                        sys.exit(1)
-                    if len(out) == len(program):
-                        if [eval(expr, {'a': a}) for expr in out] == program:
-                            return a
+            case 4:
+                registers['B'] = f"({registers['B']} ^ {registers['C']})"
+            case 5:
+                out_conditions.append(f"{combo}[0] == {program[len(out_conditions) - 1]}")
+                assert literal in range(4, 8)
+                registers['0123ABC'[literal]] = str(program[len(out_conditions) - 1])
+                if len(out_conditions) == len(program):
+                    break
+            case 6:
+                registers['B'] = f"({registers['A']} >> {combo})"
+            case 7:
+                registers['C'] = f"({registers['A']} >> {combo})"
+        ip += 2
+    for i in jump_conditions:
+        print(i)
+    for i in reversed(out_conditions):
+        print(i)
 
-                case 6:
-                    registers['B'] = f"({registers['A']} // (1 << {combo}))"
-                case 7:
-                    registers['C'] = f"({registers['A']} // (1 << {combo}))"
-            ip += 2
-
+def part2(raw):
+    part22(raw)
+    registers, program = parse(raw)
+    candidates = list(range(2**9))
+    for i in reversed(range(16)):
+        new_candidates = []
+        for a0 in candidates:
+            for da in range(8):
+                a = a0 + da
+                if (((a % 8) ^ 2 ^ (a >> (a % 8))) ^ 3) % 8 == program[i]:
+                    new_candidates.append(a * 8)
+        if i == 1:
+            pass
+        candidates = new_candidates
+    a = min(candidates)
+    assert a < 4865100593967448
+    assert a < 432075869381536
+    return a
 
 test1 = """Register A: 729
 Register B: 0
@@ -195,8 +197,9 @@ def main():
     benchmark(part1, raw)
     # not 1,5,4,3,5,0,0,4,0
     #     1,7,2,1,4,1,5,4,0
-    test(part2, test2, expected2)
+    # test(part2, test2, expected2)
     benchmark(part2, raw)
+
 
 
 if __name__ == "__main__":
