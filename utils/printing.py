@@ -121,9 +121,7 @@ def debug_print_sparse_grid(
 def pprint(object_, stream=None, indent=1, width=80, depth=None, *,
            compact=False, sort_dicts=True, underscore_numbers=False):
     if isinstance(object_, str):
-        print('"""', file=stream)
-        print(object_.replace("\\", "\\\\"), file=stream)
-        print('"""', file=stream)
+        print(object_, file=stream)
     else:
         not_my_pp(object_, stream, indent, width, depth, compact=compact, sort_dicts=sort_dicts,
                   underscore_numbers=underscore_numbers)
