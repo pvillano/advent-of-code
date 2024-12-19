@@ -46,12 +46,12 @@ def part1(raw: str):
 def part2(raw):
     registers, program = parse(raw)
     ip = 0
-    a = z3.BitVec('a', len(program) * 3 + 3)
     optimizer = z3.Optimize()
-    optimizer.minimize(a)
+    a = z3.BitVec('a', len(program) * 3)
     optimizer.add(a > 0)
+    optimizer.minimize(a)
     registers['A'] = a
-    times_outputted = 0
+    output_count = 0
     while True:
         op = program[ip]
         literal = program[ip + 1]
@@ -64,7 +64,7 @@ def part2(raw):
             case 2:
                 registers['B'] = combo % 8
             case 3:
-                if times_outputted < len(program):
+                if output_count < len(program):
                     optimizer.add(registers['A'] != 0)
                     ip = literal
                     continue
@@ -74,8 +74,8 @@ def part2(raw):
             case 4:
                 registers['B'] ^= registers['C']
             case 5:
-                optimizer.add(combo % 8 == program[times_outputted])
-                times_outputted += 1
+                optimizer.add(combo % 8 == program[output_count])
+                output_count += 1
             case 6:
                 registers['B'] = registers['A'] >> combo
             case 7:
