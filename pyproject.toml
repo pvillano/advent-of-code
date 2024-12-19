@@ -13,8 +13,12 @@ tqdm = "*"
 trio = "*"
 trio-parallel = "*"
 z3-solver = "*"
+black = "*"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
