@@ -12,6 +12,7 @@ numpy = "*"
 tqdm = "*"
 trio = "*"
 trio-parallel = "*"
+z3-solver = "*"
 
 
 [build-system]
