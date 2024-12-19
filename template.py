@@ -19,28 +19,26 @@ with open("template.py") as template_file:
     for i in range(1, up_to_day + 1):
         p = f"day{i:02}.py"
         if not os.path.exists(p):
-            file_contents = template_string.replace("DAYNUMBER", str(i))
+            file_contents = template_string.replace("DAY_NUMBER", str(i))
             with open(p, "x") as out_file:
                 out_file.write(file_contents)
-exit(0)
-DAYNUMBER = 0
+if not "":
+    exit(0)
+DAY_NUMBER = 0
 ################################################################################
 from utils import benchmark, get_day, test
 
 
 def parse(raw: str):
-    ret = []
-    for line in raw.splitlines():
-        ret.append(line)
-    return ret
+    return raw
 
 
 def part1(raw: str):
-    lines = parse(raw)
+    parse(raw)
 
 
 def part2(raw: str):
-    lines = parse(raw)
+    parse(raw)
 
 
 test1 = """"""
@@ -53,7 +51,7 @@ expected2 = None
 
 def main():
     test(part1, test1, expected1)
-    raw = get_day(DAYNUMBER)
+    raw = get_day(DAY_NUMBER)
     benchmark(part1, raw)
     test(part2, test2, expected2)
     benchmark(part2, raw)
