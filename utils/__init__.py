@@ -12,6 +12,7 @@ from . import submit
 from .advent import test, benchmark, get_day
 
 __all__ = [
+    "advent",
     "functools2",
     "graphs",
     "grids",
@@ -20,10 +21,8 @@ __all__ = [
     "otqdm",
     "parsing",
     "printing",
-    "advent.py",
     "submit",
-
     "benchmark",
     "get_day",
-    "test"
+    "test",
 ]

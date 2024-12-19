@@ -17,18 +17,19 @@ NESW_RC = ((-1, 0), (0, 1), (1, 0), (0, -1))
 NESW_XY = ((0, 1), (1, 0), (0, -1), (-1, 0))
 
 
-def transpose(iterable:Iterable[Collection]):
+def transpose(iterable: Iterable[Collection]):
     iterable = list(iterable)
     assert len(set(map(len, iterable))) == 1, "Matrix must not be jagged"
-    return list(map(list,zip(*iterable)))
+    return list(map(list, zip(*iterable)))
 
 
-def rotate_clockwise(grid:Reversible[Collection]):
+def rotate_clockwise(grid: Reversible[Collection]):
     return transpose(reversed(grid))
 
 
-def rotate_counterclockwise(grid:Iterable[Collection]):
+def rotate_counterclockwise(grid: Iterable[Collection]):
     return reversed(transpose(grid))
+
 
 def grid_index(grid, value):
     for r, row in enumerate(grid):

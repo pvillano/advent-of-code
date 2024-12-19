@@ -2,7 +2,7 @@ __all__ = [
     "benchmark",
     "DEBUG",
     "get_day",
-    "test"
+    "test",
 ]
 
 import datetime
@@ -16,7 +16,7 @@ import requests
 
 from . import printing
 
-has_trace = hasattr(sys, 'gettrace') and sys.gettrace() is not None
+has_trace = hasattr(sys, "gettrace") and sys.gettrace() is not None
 has_breakpoint = sys.breakpointhook.__module__ != "sys"
 DEBUG = has_trace or has_breakpoint
 
@@ -33,9 +33,7 @@ def get_day(day: int) -> str:
     if not os.path.exists(filename):
         with open(".token", "r") as token_file:
             cookies = {"session": token_file.read()}
-        response = requests.get(
-            f"https://adventofcode.com/{THIS_YEAR}/day/{day}/input", cookies=cookies
-        )
+        response = requests.get(f"https://adventofcode.com/{THIS_YEAR}/day/{day}/input", cookies=cookies)
         response.raise_for_status()
         with open(filename, "w") as cache_file:
             cache_file.write(response.text)
@@ -51,9 +49,9 @@ def test(func: Callable, data, expected):
     start_time = time.perf_counter_ns()
     ans = func(data)
     end_time = time.perf_counter_ns()
-    seconds = (end_time - start_time) / 10 ** 9
+    seconds = (end_time - start_time) / 10**9
     if not ans == expected:
-        print(f"FAILED in {seconds:0.3f} seconds FAILED FAILED FAILED FAILED FAILED FAILED FAILED FAILED FAILED", file=out_stream)
+        print(f"FAILED in {seconds:0.3f} seconds FAILED FAILED FAILED FAILED ", file=out_stream)
         print("Expected:", expected, file=out_stream)
         print("Actual:  ", ans, file=out_stream)
         print(file=out_stream, flush=DEBUG)
@@ -73,7 +71,7 @@ def benchmark(func: Callable, *args, **kwargs) -> Any:
     start_time = time.perf_counter_ns()
     ans = func(*args, **kwargs)
     end_time = time.perf_counter_ns()
-    seconds = (end_time - start_time) / 10 ** 9
+    seconds = (end_time - start_time) / 10**9
     printing.pprint(ans, stream=out_stream)
     print(f"Completed in {seconds:0.3f} seconds.\n", file=out_stream, flush=True)
     return ans

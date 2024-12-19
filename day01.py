@@ -8,9 +8,10 @@ from utils.parsing import extract_ints
 def parse(raw: str):
     return list(map(extract_ints, raw.splitlines()))
 
+
 def part1(raw: str):
     left_list, right_list = map(sorted, transpose(parse(raw)))
-    return sum([abs(left-right) for left,right in zip(left_list,right_list)])
+    return sum([abs(left - right) for left, right in zip(left_list, right_list)])
 
 
 def part2(raw: str):

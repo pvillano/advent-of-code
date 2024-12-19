@@ -10,8 +10,8 @@ def blink(stones):
         if s == 0:
             yield 1
         elif len(strs) % 2 == 0:
-            yield int(strs[:len(strs) // 2])
-            yield int(strs[len(strs) // 2:])
+            yield int(strs[: len(strs) // 2])
+            yield int(strs[len(strs) // 2 :])
         else:
             yield s * 2024
 
@@ -28,12 +28,62 @@ def ilen(it):
 
 
 def part1(raw: str):
-    return ilen(blink(blink(blink(blink(blink(
-        blink(blink(blink(blink(blink(
-            blink(blink(blink(blink(blink(
-                blink(blink(blink(blink(blink(
-                    blink(blink(blink(blink(blink(
-                        map(int, raw.split())))))))))))))))))))))))))))
+    return ilen(
+        blink(
+            blink(
+                blink(
+                    blink(
+                        blink(
+                            blink(
+                                blink(
+                                    blink(
+                                        blink(
+                                            blink(
+                                                blink(
+                                                    blink(
+                                                        blink(
+                                                            blink(
+                                                                blink(
+                                                                    blink(
+                                                                        blink(
+                                                                            blink(
+                                                                                blink(
+                                                                                    blink(
+                                                                                        blink(
+                                                                                            blink(
+                                                                                                blink(
+                                                                                                    blink(
+                                                                                                        blink(
+                                                                                                            map(
+                                                                                                                int,
+                                                                                                                raw.split(),
+                                                                                                            )
+                                                                                                        )
+                                                                                                    )
+                                                                                                )
+                                                                                            )
+                                                                                        )
+                                                                                    )
+                                                                                )
+                                                                            )
+                                                                        )
+                                                                    )
+                                                                )
+                                                            )
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
 
 
 def part2(raw: str):
@@ -46,8 +96,8 @@ def part2(raw: str):
             else:
                 strk = str(k)
                 if len(strk) % 2 == 0:
-                    new_stones[int(strk[:len(strk) // 2])] += v
-                    new_stones[int(strk[len(strk) // 2:])] += v
+                    new_stones[int(strk[: len(strk) // 2])] += v
+                    new_stones[int(strk[len(strk) // 2 :])] += v
                 else:
                     new_stones[k * 2024] += v
         stones = new_stones

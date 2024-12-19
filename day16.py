@@ -16,8 +16,8 @@ def parse(raw: str):
 def lch(raw: str):
     lines = parse(raw)
     height, width = len(lines), len(lines[0])
-    start_r, start_c = grid_index(lines, 'S')
-    end_r, end_c = grid_index(lines, 'E')
+    start_r, start_c = grid_index(lines, "S")
+    end_r, end_c = grid_index(lines, "E")
 
     least_cost_here = [[[inf] * 4 for _ in range(width)] for _ in range(height)]
     least_cost_here[start_r][start_c][1] = 0
@@ -38,7 +38,7 @@ def lch(raw: str):
         dr, dc = NESW_RC[facing]
         r += dr
         c += dc
-        if lines[r][c] == '#':
+        if lines[r][c] == "#":
             continue
         new_cost = cost_here + 1
         if least_cost_here[r][c][facing] > new_cost:

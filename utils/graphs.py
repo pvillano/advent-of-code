@@ -93,6 +93,7 @@ def topological_sort(adj_list: AdjacencyListType) -> list[int]:
 
     return stack[::-1]
 
+
 # assert is_dag({0: [1, 2], 1: [2, 3], 2: [3], 3: []})
 # assert is_dag({0: [1, 2], 1: [2, 3], 2: [3]})
 # assert not is_dag({0: [1, 2], 1: [0]})

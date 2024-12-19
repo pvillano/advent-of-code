@@ -10,9 +10,9 @@ def parse(raw: str):
 
 
 def safe(report):
-    if any([a<b for a,b in zip(report, report[1:])]) and any([a>b for a,b in zip(report, report[1:])]):
+    if any([a < b for a, b in zip(report, report[1:])]) and any([a > b for a, b in zip(report, report[1:])]):
         return False
-    if all([1<=abs(a-b)<=3 for a,b in zip(report, report[1:])]):
+    if all([1 <= abs(a - b) <= 3 for a, b in zip(report, report[1:])]):
         return True
     return False
 
@@ -24,6 +24,7 @@ def part1(raw: str):
         if safe(report):
             safe_count += 1
     return safe_count
+
 
 def part2(raw: str):
     reports = parse(raw)

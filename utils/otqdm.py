@@ -1,8 +1,9 @@
 __all__ = ["otqdm"]
 
-from math import log, exp, inf
 import time
 from collections.abc import Sized, Iterable
+from math import log, exp, inf
+
 UTF = " " + "".join(map(chr, range(0x258F, 0x2587, -1)))
 
 
@@ -12,7 +13,7 @@ def format_interval(ns):
         return "??:??"
     if ns == inf:
         return "forever"
-    t = ns / 10 ** 9
+    t = ns / 10**9
     mins, s = divmod(int(t), 60)
     h, m = divmod(mins, 60)
     if h:
@@ -22,14 +23,14 @@ def format_interval(ns):
 
 
 def otqdm(
-        iterator: Sized and Iterable,
-        min_interval=1,
-        min_iters=1,
-        unit="it/s",
-        n_bars=10,
-        percent_is_time=False,
-        bars_is_time=False,
-        len_iterator=None,
+    iterator: Sized and Iterable,
+    min_interval=1,
+    min_iters=1,
+    unit="it/s",
+    n_bars=10,
+    percent_is_time=False,
+    bars_is_time=False,
+    len_iterator=None,
 ):
     """
     Operates similarly to tqdm, but also gives an estimate of the fuction's algorithmic complexity
@@ -74,16 +75,16 @@ def otqdm(
             exponent = log(elapsed / elapsed_prev) / log(n / last_print_n)
             base = exp(log(elapsed / elapsed_prev) / (n - last_print_n))
             if 0.05 <= exponent < 9.95:
-                k = elapsed / (n ** exponent)
+                k = elapsed / (n**exponent)
                 big_o_str = f"O(n^{exponent:3.1f})"
                 if len_iterator is not None:
-                    remaining = k * (len_iterator ** exponent) - elapsed
+                    remaining = k * (len_iterator**exponent) - elapsed
             elif 0.05 <= base < 9.95:
-                k = elapsed / (base ** n)
+                k = elapsed / (base**n)
                 big_o_str = f"O({base:3.1f}^n)"
                 if len_iterator is not None:
                     try:
-                        remaining = k * (base ** len_iterator) - elapsed
+                        remaining = k * (base**len_iterator) - elapsed
                     except OverflowError:
                         remaining = inf
             else:
@@ -101,16 +102,10 @@ def otqdm(
             percent = time_percent if percent_is_time else count_percent
             percent_b = time_percent if bars_is_time else count_percent
 
-            bar_length, frac_bar_length = divmod(
-                int(percent_b * n_bars * n_syms), n_syms
-            )
+            bar_length, frac_bar_length = divmod(int(percent_b * n_bars * n_syms), n_syms)
             bar_str = UTF[-1] * bar_length
             if bar_length < n_bars:  # whitespace padding
-                bar_str = (
-                        bar_str
-                        + UTF[frac_bar_length]
-                        + UTF[0] * (n_bars - bar_length - 1)
-                )
+                bar_str = bar_str + UTF[frac_bar_length] + UTF[0] * (n_bars - bar_length - 1)
 
             s = f"{big_o_str} {percent * 100:3.0f}%|{bar_str}| {n}/{len_iterator} [{elapsed_str}/{remaining_str}, {rate:5.2f}{unit}]"
 
@@ -118,7 +113,7 @@ def otqdm(
             s = f"{big_o_str} ??%|??????????| {n}/{'?' * len(str(n))} [{elapsed_str}/{remaining_str}, {rate:5.2f}{unit}]"
 
         len_s = len(s)
-        print('\r' + s + (' ' * max(last_len - len_s, 0)), end="")
+        print("\r" + s + (" " * max(last_len - len_s, 0)), end="")
         last_len = len_s
 
         last_print_n = n
@@ -132,7 +127,6 @@ if __name__ == "__main__":
         if i < 2:
             return 1
         return fibonacci(i - 1) + fibonacci(i - 2)
-
 
     print(">>>for i in otdqm(range(40)):\n" "...    sleep(i/100)")
     for i in otqdm(range(40)):

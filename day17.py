@@ -19,67 +19,67 @@ def part1(raw: str):
     while ip in range(len(program)):
         op = program[ip]
         literal = program[ip + 1]
-        combo = [0, 1, 2, 3, registers['A'], registers['B'], registers['C']][literal]
+        combo = [0, 1, 2, 3, registers["A"], registers["B"], registers["C"]][literal]
         match op:
             case 0:
-                registers['A'] = registers['A'] >> combo
+                registers["A"] = registers["A"] >> combo
             case 1:
-                registers['B'] ^= literal
+                registers["B"] ^= literal
             case 2:
-                registers['B'] = combo % 8
+                registers["B"] = combo % 8
             case 3:
-                if registers['A'] != 0:
+                if registers["A"] != 0:
                     ip = literal
                     continue
             case 4:
-                registers['B'] ^= registers['C']
+                registers["B"] ^= registers["C"]
             case 5:
                 out.append(combo % 8)
             case 6:
-                registers['B'] = registers['A'] >> combo
+                registers["B"] = registers["A"] >> combo
             case 7:
-                registers['C'] = registers['A'] >> combo
+                registers["C"] = registers["A"] >> combo
         ip += 2
-    return ','.join(map(str, out))
+    return ",".join(map(str, out))
 
 
 def part2(raw):
     registers, program = parse(raw)
     ip = 0
     optimizer = z3.Optimize()
-    a = z3.BitVec('a', len(program) * 3)
+    a = z3.BitVec("a", len(program) * 3)
     optimizer.add(a > 0)
     optimizer.minimize(a)
-    registers['A'] = a
+    registers["A"] = a
     output_count = 0
     while True:
         op = program[ip]
         literal = program[ip + 1]
-        combo = [0, 1, 2, 3, registers['A'], registers['B'], registers['C']][literal]
+        combo = [0, 1, 2, 3, registers["A"], registers["B"], registers["C"]][literal]
         match op:
             case 0:
-                registers['A'] = registers['A'] >> combo
+                registers["A"] = registers["A"] >> combo
             case 1:
-                registers['B'] = registers['B'] ^ literal
+                registers["B"] = registers["B"] ^ literal
             case 2:
-                registers['B'] = combo % 8
+                registers["B"] = combo % 8
             case 3:
                 if output_count < len(program):
-                    optimizer.add(registers['A'] != 0)
+                    optimizer.add(registers["A"] != 0)
                     ip = literal
                     continue
                 else:
-                    optimizer.add(registers['A'] == 0)
+                    optimizer.add(registers["A"] == 0)
                     break
             case 4:
-                registers['B'] ^= registers['C']
+                registers["B"] ^= registers["C"]
             case 5:
                 optimizer.add(combo % 8 == program[output_count])
                 output_count += 1
             case 6:
-                registers['B'] = registers['A'] >> combo
+                registers["B"] = registers["A"] >> combo
             case 7:
-                registers['C'] = registers['A'] >> combo
+                registers["C"] = registers["A"] >> combo
         ip += 2
     optimizer.check()
     return optimizer.model().eval(a)

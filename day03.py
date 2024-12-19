@@ -14,7 +14,7 @@ def part2(raw: str):
     for match in re.finditer("(do\\(\\)|don't\\(\\))|(mul\\((-?[0-9]+),(-?[0-9]+)\\))", raw):
         do_or_dont, _, x, y = match.groups()
         if do_or_dont is not None:
-            doing = do_or_dont == 'do()'
+            doing = do_or_dont == "do()"
         else:
             if doing:
                 x, y = map(int, [x, y])
@@ -29,7 +29,7 @@ def part2second_solution(raw: str):
     mul_matches = list(re.finditer("mul\\((-?[0-9]+),(-?[0-9]+)\\)", raw))
     matches = sorted(do_matches + mul_matches, key=lambda x: x.start())
     for match in matches:
-        if match.groups()[0] == 'do':
+        if match.groups()[0] == "do":
             doing = True
         elif match.groups()[0] == "don't":
             doing = False

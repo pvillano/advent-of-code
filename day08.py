@@ -9,7 +9,7 @@ def parse(raw: str):
     lines = raw.splitlines()
     for r, row in enumerate(lines):
         for c, char in enumerate(row):
-            if char != '.':
+            if char != ".":
                 atlas[char].append((r, c))
     return atlas, len(lines), len(lines[0])
 

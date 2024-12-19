@@ -5,8 +5,8 @@ from utils.grids import NEWS_RC
 from utils.printing import debug_print
 
 
-def parse(raw: str): \
-        return raw.splitlines()
+def parse(raw: str):
+    return raw.splitlines()
 
 
 def part1(raw: str):
@@ -81,7 +81,7 @@ def part2(raw: str):
 
             perimeters = []
             for r, c in region:
-                for news, (dr, dc) in zip('NEWS', NEWS_RC):
+                for news, (dr, dc) in zip("NEWS", NEWS_RC):
                     nr, nc = r + dr, c + dc
                     if nr not in range(height) or nc not in range(width) or lines[nr][nc] != ch:
                         perimeters.append((nr, nc, news))
@@ -90,7 +90,7 @@ def part2(raw: str):
             perimeter = 0
             for news_id, group in groupby(perimeters, key):
                 group = list(group)
-                if news_id in 'NS':
+                if news_id in "NS":
                     group.sort(key=lambda x: x[0])
                     for r, group2 in groupby(group, key=lambda x: x[0]):
                         group2 = list(group2)
@@ -101,7 +101,7 @@ def part2(raw: str):
                                 perimeter += 1
                             prev_c = c
                 else:
-                    assert news_id in 'EW'
+                    assert news_id in "EW"
                     group.sort(key=lambda x: x[1])
                     for c, group2 in groupby(group, key=lambda x: x[1]):
                         group2 = list(group2)

@@ -24,7 +24,7 @@ def part1(raw: str):
     ]:
         for line in lines:
             for x, m, a, s in zip(line, line[1:], line[2:], line[3:]):
-                if "".join((x, m, a, s)) == 'XMAS':
+                if "".join((x, m, a, s)) == "XMAS":
                     cnt += 1
         for diag_start in flatten([product(range(len(lines)), [0]), product([0], range(1, len(lines[0])))]):
             for dx in count():
@@ -33,7 +33,7 @@ def part1(raw: str):
                 c0 += dx
                 try:
                     x, m, a, s = [lines[r0 + i][c0 + i] for i in range(4)]
-                    if "".join((x, m, a, s)) == 'XMAS':
+                    if "".join((x, m, a, s)) == "XMAS":
                         cnt += 1
                 except IndexError:
                     break

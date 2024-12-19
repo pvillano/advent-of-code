@@ -11,8 +11,6 @@ def parse(raw: str):
     return ret
 
 
-
-
 def part1(raw: str):
     atlas = parse(raw)
     height = len(atlas)
@@ -21,7 +19,8 @@ def part1(raw: str):
     for r, row in enumerate(atlas):
         for c, topo in enumerate(row):
             if topo == 0:
-                trailheads.append((r,c))
+                trailheads.append((r, c))
+
     def score(head):
         head_r, head_c = head
         assert atlas[head_r][head_c] == 0
@@ -30,15 +29,13 @@ def part1(raw: str):
             new_ancestors = []
             for r1, c1 in ancestors:
                 for dr, dc in NESW_RC:
-                    r2, c2 =  r1 + dr, c1 + dc
+                    r2, c2 = r1 + dr, c1 + dc
                     if r2 in range(height) and c2 in range(width) and atlas[r2][c2] == generation + 1:
                         new_ancestors.append((r2, c2))
             ancestors = set(new_ancestors)
         return len(ancestors)
 
-
     return sum(map(score, trailheads))
-
 
 
 def part2(raw: str):
@@ -49,18 +46,17 @@ def part2(raw: str):
     for r, row in enumerate(atlas):
         for c, topo in enumerate(row):
             if topo == 0:
-                trailheads.append((r,c,0))
+                trailheads.append((r, c, 0))
 
     def score(r1, c1, generation):
         if generation == 9:
             return 1
         s = 0
         for dr, dc in NESW_RC:
-            r2, c2 =  r1 + dr, c1 + dc
+            r2, c2 = r1 + dr, c1 + dc
             if r2 in range(height) and c2 in range(width) and atlas[r2][c2] == generation + 1:
                 s += score(r2, c2, generation + 1)
         return s
-
 
     return sum(starmap(score, trailheads))
 

@@ -11,6 +11,7 @@ def parse(raw: str):
     patterns = second.splitlines()
     return towels, patterns
 
+
 def part1(raw: str):
     towels, patterns = parse(raw)
 
@@ -20,7 +21,7 @@ def part1(raw: str):
             return True
         for t in towels:
             if st.startswith(t):
-                if dfs(st[len(t):]):
+                if dfs(st[len(t) :]):
                     return True
         return False
 
@@ -41,10 +42,11 @@ def part2(raw: str):
         ways = 0
         for t in towels:
             if st.startswith(t):
-                ways +=  dfs(st[len(t):])
+                ways += dfs(st[len(t) :])
         return ways
+
     s = 0
-    for p in tqdm(patterns):
+    for p in patterns:
         s += dfs(p)
     return s
 

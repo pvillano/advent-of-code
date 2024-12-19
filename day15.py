@@ -9,11 +9,11 @@ to_dr_dc = {k: v for k, v in zip("^><v", NEWS_RC)}
 
 
 def parse(raw: str):
-    atlas, moves = raw.split('\n\n')
+    atlas, moves = raw.split("\n\n")
     atlas = atlas.splitlines()
     r, c = 0, 0
     for r, row in enumerate(atlas):
-        if (c := row.find('@')) >= 0:
+        if (c := row.find("@")) >= 0:
             break
     atlas = [[ch for ch in rows] for rows in atlas]
 
@@ -22,20 +22,20 @@ def parse(raw: str):
 
 
 def part1(raw: str):
-    wall = '#'
-    box = 'O'
+    wall = "#"
+    box = "O"
     r, c, atlas, moves = parse(raw)
     height, width = len(atlas), len(atlas[0])
     for move in moves:
         debug_print_grid(atlas)
-        assert atlas[r][c] == '@'
+        assert atlas[r][c] == "@"
         dr, dc = to_dr_dc[move]
         nr, nc = r + dr, c + dc
-        if atlas[nr][nc] == '.':
+        if atlas[nr][nc] == ".":
             atlas[r][c], atlas[nr][nc] = atlas[nr][nc], atlas[r][c]
             r, c = nr, nc
             continue
-        if atlas[nr][nc] == '#':
+        if atlas[nr][nc] == "#":
             continue
         assert atlas[nr][nc] == box
         while nr in range(height) and nc in range(width) and atlas[nr][nc] == box:
@@ -45,12 +45,12 @@ def part1(raw: str):
             # unmovable
             continue
         # else movable
-        assert atlas[nr][nc] == '.'
-        assert atlas[r][c] == '@'
+        assert atlas[nr][nc] == "."
+        assert atlas[r][c] == "@"
         atlas[nr][nc] = box
-        atlas[r][c] = '.'
+        atlas[r][c] = "."
         r, c = r + dr, c + dc
-        atlas[r][c] = '@'
+        atlas[r][c] = "@"
     s = 0
     for r, c in product(range(height), range(width)):
         if atlas[r][c] == box:
@@ -58,16 +58,11 @@ def part1(raw: str):
     return s
 
 
-expand = {
-    "#": "##",
-    "O": "[]",
-    ".": "..",
-    "@": "@.",
-}
+expand = {"#": "##", "O": "[]", ".": "..", "@": "@."}
 
 
 def parse2(raw: str):
-    atlas, moves = raw.split('\n\n')
+    atlas, moves = raw.split("\n\n")
     atlas = atlas.splitlines()
 
     def xpand(row):
@@ -79,7 +74,7 @@ def parse2(raw: str):
     found = False
     for r, row in enumerate(atlas):
         for c, ch in enumerate(row):
-            if ch == '@':
+            if ch == "@":
                 found = True
                 break
         if found:
@@ -90,48 +85,48 @@ def parse2(raw: str):
 
 
 def part2(raw: str):
-    box = '[]'
+    box = "[]"
     r, c, atlas, moves = parse2(raw)
     debug_print_grid(atlas)
     height, width = len(atlas), len(atlas[0])
     for move in moves:
         debug_print(move)
         debug_print_grid(atlas)
-        assert atlas[r][c] == '@'
+        assert atlas[r][c] == "@"
         dr, dc = to_dr_dc[move]
         nr, nc = r + dr, c + dc
-        if atlas[nr][nc] == '.':
+        if atlas[nr][nc] == ".":
             atlas[r][c], atlas[nr][nc] = atlas[nr][nc], atlas[r][c]
             r, c = nr, nc
-            assert atlas[r][c] == '@'
+            assert atlas[r][c] == "@"
             continue
-        if atlas[nr][nc] == '#':
-            assert atlas[r][c] == '@'
+        if atlas[nr][nc] == "#":
+            assert atlas[r][c] == "@"
             continue
 
         assert atlas[nr][nc] in box
 
-        if move in '<>':
-            while nr in range(height) and nc in range(width) and atlas[nr][nc] in '[]':
+        if move in "<>":
+            while nr in range(height) and nc in range(width) and atlas[nr][nc] in "[]":
                 nr += dr
                 nc += dc
-            if nr not in range(height) or nc not in range(width) or atlas[nr][nc] == '#':
+            if nr not in range(height) or nc not in range(width) or atlas[nr][nc] == "#":
                 # unmovable
                 continue
             # else movable
-            assert atlas[nr][nc] == '.'
-            assert atlas[r][c] == '@'
+            assert atlas[nr][nc] == "."
+            assert atlas[r][c] == "@"
             # atlas[r][r+dr:nr] = atlas[c][r:nr-dr]
-            if move == '<':
+            if move == "<":
                 oldstart, oldend = nc - dc, c
                 newstart, newend = nc, c + dc
             else:
                 oldstart, oldend = c, nc
                 newstart, newend = c + dc, nc + dc
             atlas[r][newstart:newend] = atlas[r][oldstart:oldend]
-            atlas[r][c] = '.'
+            atlas[r][c] = "."
             r, c = r + dr, c + dc
-            atlas[r][c] = '@'
+            atlas[r][c] = "@"
         else:
             q = [(nr, nc)]
             seen = set()
@@ -140,16 +135,16 @@ def part2(raw: str):
                 check_r, check_c = q.pop()
                 if (check_r, check_c) in seen:
                     continue
-                if atlas[check_r][check_c] == '.':
+                if atlas[check_r][check_c] == ".":
                     continue
-                if atlas[check_r][check_c] == '#':
+                if atlas[check_r][check_c] == "#":
                     blocked = True
                     break
-                assert atlas[check_r][check_c] in '[]'
+                assert atlas[check_r][check_c] in "[]"
                 seen.add((check_r, check_c))
-                if atlas[check_r][check_c] == '[':
+                if atlas[check_r][check_c] == "[":
                     q.append((check_r, check_c + 1))
-                if atlas[check_r][check_c] == ']':
+                if atlas[check_r][check_c] == "]":
                     q.append((check_r, check_c - 1))
                 q.append((check_r + dr, check_c + dc))
 
@@ -158,12 +153,12 @@ def part2(raw: str):
             else:
                 new_atlas = deepcopy(atlas)
                 for rr, cc in seen:
-                    new_atlas[rr][cc] = '.'
+                    new_atlas[rr][cc] = "."
                 for rr, cc in seen:
                     new_atlas[rr + dr][cc + dc] = atlas[rr][cc]
                 atlas = new_atlas
-                assert atlas[r][c] == '@'
-                assert atlas[nr][nc] == '.'
+                assert atlas[r][c] == "@"
+                assert atlas[nr][nc] == "."
                 atlas[r][c], atlas[nr][nc] = atlas[nr][nc], atlas[r][c]
                 r, c = nr, nc
 
@@ -171,7 +166,7 @@ def part2(raw: str):
 
     s = 0
     for r, c in product(range(height), range(width)):
-        if atlas[r][c] == '[':
+        if atlas[r][c] == "[":
             s += 100 * r + c
     return s
 

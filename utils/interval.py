@@ -14,6 +14,7 @@ class IntervalSet(collections.abc.Set):
     invariants:
     __intervals is a list of non-overlapping ranges
     """
+
     __intervals: list[tuple[int, int]]
 
     def __init__(self, __iterable: Iterable[tuple[int, int]] = None):

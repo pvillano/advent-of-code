@@ -35,12 +35,12 @@ def part2(raw: str):
     best_lonelies = len(lines)
     best_t = 0
     for t in range(width * height):
-        positions = {((px + vx * t) % width, (py + vy * t) % height): '#' for px, py, vx, vy in lines}
+        positions = {((px + vx * t) % width, (py + vy * t) % height): "#" for px, py, vx, vy in lines}
         lonelies = 0
         for x, y in positions:
             friend = False
             for dx, dy in NEWS_XY:
-                if (x+dx, y+dy) in positions:
+                if (x + dx, y + dy) in positions:
                     friend = True
                     continue
             if not friend:
@@ -69,11 +69,13 @@ expected1 = 12
 test2 = test1
 expected2 = None
 
+
 def main():
     test(part1, test1, expected1)
     raw = get_day(14)
     benchmark(part1, raw)
     benchmark(part2, raw)
+
 
 if __name__ == "__main__":
     main()

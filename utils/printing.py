@@ -46,7 +46,7 @@ def debug_print_grid(grid: list[str] or list[list[any]] or np.ndarray, *, overri
     if isinstance(grid[0][0], bool) or isinstance(grid[0][0], np.bool_):
         for line in grid:
             for i in line:
-                print('#' if i else '.', file=sys.stderr, end=" ")
+                print("#" if i else ".", file=sys.stderr, end=" ")
             print(file=sys.stderr)
         print(file=sys.stderr, flush=True)
         return
@@ -76,9 +76,7 @@ def debug_print_recursive(*args, override=False, **kwargs) -> None:
     return print(" |" * indent, *args, **kwargs, file=sys.stderr, flush=True)
 
 
-def debug_print_sparse_grid(
-        grid_map: dict[(int, int), Any] or set, *, transpose=False, override=False
-) -> None:
+def debug_print_sparse_grid(grid_map: dict[(int, int), Any] or set, *, transpose=False, override=False) -> None:
     """
     Prints a sparse grid
     :param grid_map:
@@ -99,9 +97,7 @@ def debug_print_sparse_grid(
         for y in range(y0, y1 + 1):
             for x in range(x0, x1 + 1):
                 if (x, y) in grid_map:
-                    print(
-                        str(grid_map[(x, y)]).rjust(max_w), end="", file=sys.stderr
-                    )
+                    print(str(grid_map[(x, y)]).rjust(max_w), end="", file=sys.stderr)
                 else:
                     print("." * max_w, end="", file=sys.stderr)
             print(file=sys.stderr, flush=True)
@@ -109,19 +105,26 @@ def debug_print_sparse_grid(
         for x in range(x0, x1 + 1):
             for y in range(y0, y1 + 1):
                 if (x, y) in grid_map:
-                    print(
-                        str(grid_map[(x, y)]).rjust(max_w), end="", file=sys.stderr
-                    )
+                    print(str(grid_map[(x, y)]).rjust(max_w), end="", file=sys.stderr)
                 else:
                     print("." * max_w, end="", file=sys.stderr)
             print(file=sys.stderr, flush=True)
     print(file=sys.stderr, flush=True)
 
 
-def pprint(object_, stream=None, indent=1, width=80, depth=None, *,
-           compact=False, sort_dicts=True, underscore_numbers=False):
+def pprint(
+    object_, stream=None, indent=1, width=80, depth=None, *, compact=False, sort_dicts=True, underscore_numbers=False
+):
     if isinstance(object_, str):
         print(object_, file=stream)
     else:
-        not_my_pp(object_, stream, indent, width, depth, compact=compact, sort_dicts=sort_dicts,
-                  underscore_numbers=underscore_numbers)
+        not_my_pp(
+            object_,
+            stream,
+            indent,
+            width,
+            depth,
+            compact=compact,
+            sort_dicts=sort_dicts,
+            underscore_numbers=underscore_numbers,
+        )

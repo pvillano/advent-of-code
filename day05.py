@@ -5,7 +5,7 @@ from utils.parsing import extract_ints
 
 
 def parse(raw: str):
-    first, second = raw.split('\n\n')
+    first, second = raw.split("\n\n")
     rule_pairs = [extract_ints(line) for line in first.splitlines()]
     rules = defaultdict(set)
     for before, after in rule_pairs:

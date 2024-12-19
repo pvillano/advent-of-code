@@ -15,7 +15,7 @@ def part1(raw: str):
     seen = [[0] * len(lines[0]) for i in range(len(lines))]
     r, c = -1, -1
     for idx, row in enumerate(lines):
-        tmp = row.find('^')
+        tmp = row.find("^")
         if tmp != -1:
             r, c = idx, tmp
     facing = 0
@@ -26,19 +26,20 @@ def part1(raw: str):
         nr, nc = r + NESW_RC[facing][0], c + NESW_RC[facing][1]
         if nr not in range(len(lines)) or nc not in range(len(lines[0])):
             return sum(map(sum, seen))
-        while lines[nr][nc] == '#':
+        while lines[nr][nc] == "#":
             facing = (facing + 1) % 4
             nr, nc = r + NESW_RC[facing][0], c + NESW_RC[facing][1]
             if nr not in range(len(lines)) or nc not in range(len(lines[0])):
                 return sum(map(sum, seen))
         r, c = nr, nc
 
+
 def seener(raw: str):
     lines = parse(raw)
     seen = [[0] * len(lines[0]) for i in range(len(lines))]
     r, c = -1, -1
     for idx, row in enumerate(lines):
-        tmp = row.find('^')
+        tmp = row.find("^")
         if tmp != -1:
             r, c = idx, tmp
     facing = 0
@@ -49,7 +50,7 @@ def seener(raw: str):
         nr, nc = r + NESW_RC[facing][0], c + NESW_RC[facing][1]
         if nr not in range(len(lines)) or nc not in range(len(lines[0])):
             return seen
-        while lines[nr][nc] == '#':
+        while lines[nr][nc] == "#":
             facing = (facing + 1) % 4
             nr, nc = r + NESW_RC[facing][0], c + NESW_RC[facing][1]
             if nr not in range(len(lines)) or nc not in range(len(lines[0])):
@@ -64,21 +65,22 @@ def part2(raw: str):
     rows, columns = len(lines), len(lines[0])
     r, c = -1, -1
     for idx, row in enumerate(lines):
-        tmp = row.find('^')
+        tmp = row.find("^")
         if tmp != -1:
             r, c = idx, tmp
     # for i in tqdm(range(len(lines))):
     for i in range(rows):
         for j in range(columns):
-            if lines[i][j] != '.':
+            if lines[i][j] != ".":
                 continue
             if not seen[i][j]:
                 continue
             new_lines = lines[:]
-            new_lines[i] =  lines[i][:j] + '#' + lines[i][j+1:]
+            new_lines[i] = lines[i][:j] + "#" + lines[i][j + 1 :]
             if loops(new_lines, r, c):
                 s += 1
     return s
+
 
 def part2parallel(raw: str):
     seen = seener(raw)
@@ -86,21 +88,22 @@ def part2parallel(raw: str):
     rows, columns = len(lines), len(lines[0])
     r, c = -1, -1
     for idx, row in enumerate(lines):
-        tmp = row.find('^')
+        tmp = row.find("^")
         if tmp != -1:
             r, c = idx, tmp
     inputs = []
     for i in range(rows):
         for j in range(columns):
-            if lines[i][j] != '.':
+            if lines[i][j] != ".":
                 continue
             if not seen[i][j]:
                 continue
             new_lines = lines[:]
-            new_lines[i] =  lines[i][:j] + '#' + lines[i][j+1:]
-            inputs.append([new_lines,r,c])
+            new_lines[i] = lines[i][:j] + "#" + lines[i][j + 1 :]
+            inputs.append([new_lines, r, c])
 
     return sum(starmap16(loops, inputs))
+
 
 def loops(lines, r, c):
     rows, columns = len(lines), len(lines[0])
@@ -115,7 +118,7 @@ def loops(lines, r, c):
         nr, nc = r + NESW_RC[facing][0], c + NESW_RC[facing][1]
         if nr not in range(rows) or nc not in range(columns):
             return False
-        while lines[nr][nc] == '#':
+        while lines[nr][nc] == "#":
             facing = (facing + 1) % 4
             nr, nc = r + NESW_RC[facing][0], c + NESW_RC[facing][1]
             if nr not in range(rows) or nc not in range(columns):
