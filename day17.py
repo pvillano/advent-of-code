@@ -14,40 +14,7 @@ def parse(raw: str):
 
 def part1(raw: str):
     registers, program = parse(raw)
-    ip = 0
-    out = []
-    while ip in range(len(program)):
-        op = program[ip]
-        literal = program[ip + 1]
-        combo = [0, 1, 2, 3, registers['A'], registers['B'], registers['C']][literal]
-
-        match op:
-            case 0:
-                num = registers['A']
-                denom = 1 << combo
-                registers['A'] = num // denom
-            case 1:
-                registers['B'] ^= literal
-            case 2:
-                registers['B'] = combo % 8
-            case 3:
-                if registers['A'] != 0:
-                    ip = literal
-                    continue
-            case 4:
-                registers['B'] ^= registers['C']
-            case 5:
-                out.append(combo % 8)
-            case 6:
-                num = registers['A']
-                denom = 1 << combo
-                registers['B'] = num // denom
-            case 7:
-                num = registers['A']
-                denom = 1 << combo
-                registers['C'] = num // denom
-        ip += 2
-    return ','.join(map(str, out))
+    return ','.join(map(str, work(registers, program)))
 
 
 def work(registers, program):
@@ -139,7 +106,8 @@ def part22(raw: str):
             case 5:
                 out_conditions.append(f"{combo} % 8 == {program[len(out_conditions) - 1]}")
                 assert literal in range(4, 8)
-                registers['0123ABC'[literal]] = str(program[len(out_conditions) - 1])
+                if raw != test2:
+                    registers['0123ABC'[literal]] = str(program[len(out_conditions) - 1])
                 assert len(out_conditions) <= len(program)
             case 6:
                 registers['B'] = f"({registers['A']} >> {combo})"
@@ -170,11 +138,7 @@ def part2(raw):
             pass
         candidates = new_candidates
     a = min(candidates)
-    # assert (((((a >> 45) % 8) ^ 2) ^ ((a >> 45) >> (((a >> 45) % 8) ^ 2))) ^ 3) % 8 == 3
     assert a >> 48 == 0
-    assert a < 4865100593967448
-    assert a < 432075869381536
-    assert a < 297770093506464
     return a
 
 
@@ -199,9 +163,8 @@ def main():
     test(part1, test1, expected1)
     raw = get_day(17)
     benchmark(part1, raw)
-    # not 1,5,4,3,5,0,0,4,0
-    #     1,7,2,1,4,1,5,4,0
     # test(part2, test2, expected2)
+    part22(test2)
     benchmark(part2, raw)
 
 
