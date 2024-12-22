@@ -10,7 +10,6 @@ to_drdc = {k: v for k, v in zip("^><v", NEWS_RC)}
 
 
 def crosses(bad_r, bad_c, start_r, start_c, ends_in_a):
-    assert ends_in_a[-1] == "A"
     r, c = start_r, start_c
     for ch in ends_in_a[:-1]:
         dr, dc = to_drdc[ch]
@@ -22,7 +21,7 @@ def crosses(bad_r, bad_c, start_r, start_c, ends_in_a):
 
 
 @cache
-def possible_expansions(ends_in_a: str) -> tuple[tuple[str, ...], ...]:
+def all_expansions(ends_in_a: str) -> tuple[tuple[str, ...], ...]:
     if ends_in_a[:-1].isnumeric():
         pad = npad
         bad_r, bad_c = 3, 0
@@ -30,38 +29,29 @@ def possible_expansions(ends_in_a: str) -> tuple[tuple[str, ...], ...]:
         pad = dpad
         bad_r, bad_c = 0, 0
     r, c = grid_index(pad, "A")
-    garden_path: list[list[str, ...], ...] = []
+    path: list[list[str, ...], ...] = []
     for ch in ends_in_a:
         next_r, next_c = grid_index(pad, ch)
         dr, dc = next_r - r, next_c - c
-        candidates = tuple(
-            set(map(lambda x: "".join(x) + "A", permutations("v" * dr + "^" * -dr + ">" * dc + "<" * -dc)))
-        )
-        valid_candidates = [cand for cand in candidates if not crosses(bad_r, bad_c, r, c, cand)]
-        garden_path.append(valid_candidates)
+        candidates = set(map(lambda x: "".join(x) + "A", permutations("v" * dr + "^" * -dr + ">" * dc + "<" * -dc)))
+        path.append([cand for cand in candidates if not crosses(bad_r, bad_c, r, c, cand)])
         r, c = next_r, next_c
-    return tuple(product(*garden_path))
+    return tuple(product(*path))
 
 
 @cache
-def cost(end_in_a: str, times_expanding: int) -> int:
-    all_expansions = possible_expansions(end_in_a)
-    if times_expanding == 1:
-        combined_lengths = [sum(len(token) for token in expansion) for expansion in all_expansions]
-        return min(combined_lengths)
-    combined_lengths = [sum(cost(token, times_expanding - 1) for token in expansion) for expansion in all_expansions]
-    return min(combined_lengths)
+def cost(end_in_a: str, robot_cnt: int) -> int:
+    if robot_cnt == 0:
+        return len(end_in_a)
+    return min(sum(cost(token, robot_cnt - 1) for token in expansion) for expansion in all_expansions(end_in_a))
 
 
-def part1(raw: str, two=2):
-    s = 0
-    for code in raw.splitlines():
-        numeric_part = int(code[:-1])
-        len_shortest_sequence = min(
-            sum(cost(token, two) for token in token_list) for token_list in possible_expansions(code)
-        )
-        s += len_shortest_sequence * numeric_part
-    return s
+def part1(raw: str, num_robots=2):
+    return sum(
+        min(sum(cost(token, num_robots) for token in token_list) for token_list in all_expansions(code))
+        * int(code[:-1])
+        for code in raw.splitlines()
+    )
 
 
 def part2(raw: str):
