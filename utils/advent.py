@@ -1,9 +1,4 @@
-__all__ = [
-    "benchmark",
-    "DEBUG",
-    "get_day",
-    "test",
-]
+__all__ = ["benchmark", "DEBUG", "get_day", "test"]
 
 import datetime
 import os
@@ -55,8 +50,10 @@ def test(func: Callable, data, expected):
         print("Expected:", expected, file=out_stream)
         print("Actual:  ", ans, file=out_stream)
         print(file=out_stream, flush=DEBUG)
+        return False
     else:
         print(f"Passed in {seconds:0.3f} seconds\n", file=out_stream, flush=DEBUG)
+        return True
 
 
 def benchmark(func: Callable, *args, **kwargs) -> Any:
