@@ -1,3 +1,4 @@
+from functools import cache
 from itertools import permutations, product
 
 from utils import benchmark, get_day, test
@@ -8,94 +9,61 @@ npad = ["789", "456", "123", " 0A"]
 to_drdc = {k: v for k, v in zip("^><v", NEWS_RC)}
 
 
-def npad2dirs(code):
+def crosses30(start_r, start_c, ends_in_a):
+    assert ends_in_a[-1] == "A"
+    r, c = start_r, start_c
+    for ch in ends_in_a[:-1]:
+        dr, dc = to_drdc[ch]
+        r += dr
+        c += dc
+        if r == 3 and c == 0:
+            return True
+    return False
+
+
+def code_expansions(code) -> tuple[tuple[str, ...], ...]:
     r, c = grid_index(npad, "A")
-    output = []
+    garden_path: list[list[str, ...], ...] = []
     for ch in code:
-        rr, cc = grid_index(npad, ch)
-        dr, dc = rr - r, cc - c
-        # can't just choose between
-        combos = tuple(set(map(lambda x: "".join(x), permutations("v" * dr + "^" * -dr + ">" * dc + "<" * -dc))))
-        trombos = []
-        for comb in combos:
-            rrr, ccc = r, c
-            failed = False
-            for d in comb:
-                dr, dc = to_drdc[d]
-                rrr += dr
-                ccc += dc
-                if rrr == 3 and ccc == 0:
-                    failed = True
-                    break
-            if not failed:
-                trombos.append(comb)
-                assert rrr == rr and ccc == cc
-        combos = tuple(trombos)
-        assert len(combos) > 0
-        output.append(combos)
-        output.append(tuple("A"))
-        r, c = rr, cc
-    for l in product(*output):
-        yield "".join(l)
+        next_r, next_c = grid_index(npad, ch)
+        dr, dc = next_r - r, next_c - c
+        candidates = tuple(
+            set(map(lambda x: "".join(x) + "A", permutations("v" * dr + "^" * -dr + ">" * dc + "<" * -dc)))
+        )
+        valid_candidates = [cand for cand in candidates if not crosses30(r, c, cand)]
+        assert len(valid_candidates) > 0
+        garden_path.append(valid_candidates)
+        r, c = next_r, next_c
+    return tuple(product(*garden_path))
 
 
-# @cache
-# def npad2dirs(code):
-#     r, c = grid_index(npad, "A")
-#     output = ""
-#     for ch in code:
-#         rr, cc = grid_index(npad, ch)
-#         dr, dc = rr - r, cc - c
-#         # prefer right before down and up before left
-#         output += ">" * dc + "v" * dr + "^" * -dr + "<" * -dc + "A"
-#         r, c = rr, cc
-#     return output
+def crosses0(start_r, start_c, ends_in_a):
+    assert ends_in_a[-1] == "A"
+    r, c = start_r, start_c
+    for ch in ends_in_a[:-1]:
+        dr, dc = to_drdc[ch]
+        r += dr
+        c += dc
+        if r == c == 0:
+            return True
+    return False
 
 
-# @cache
-# def dirs2dirs(dirs):
-#     r, c = grid_index(dpad, "A")
-#     output = ""
-#     for ch in dirs:
-#         rr, cc = grid_index(dpad, ch)
-#         dr, dc = rr - r, cc - c
-#         # prefer down before right and left before up
-#         output += "v" * dr + ">" * dc + "<" * -dc + "^" * -dr + "A"
-#         r, c = rr, cc
-#     return output
-
-
-def dirs2dirs(codegen):
-    for code in codegen:
-        r, c = grid_index(dpad, "A")
-        output = []
-        for ch in code:
-            rr, cc = grid_index(dpad, ch)
-            dr, dc = rr - r, cc - c
-            # can't just choose between
-            combos = tuple(set(map(lambda x: "".join(x), permutations("v" * dr + "^" * -dr + ">" * dc + "<" * -dc))))
-            if (r, cc) == (0, 0) or (rr, c) == (0, 0):
-                trombos = []
-                for comb in combos:
-                    rrr, ccc = r, c
-                    failed = False
-                    for d in comb:
-                        dr, dc = to_drdc[d]
-                        rrr += dr
-                        ccc += dc
-                        if rrr == 0 and ccc == 0:
-                            failed = True
-                            break
-                    if not failed:
-                        trombos.append(comb)
-                        assert rrr == rr and ccc == cc
-                combos = tuple(trombos)
-            assert len(combos) > 0
-            output.append(combos)
-            output.append(tuple("A"))
-            r, c = rr, cc
-        for l in product(*output):
-            yield "".join(l)
+@cache
+def possible_expansions(ends_in_a: str) -> tuple[tuple[str, ...], ...]:
+    r, c = grid_index(dpad, "A")
+    garden_path: list[list[str, ...], ...] = []
+    for ch in ends_in_a:
+        next_r, next_c = grid_index(dpad, ch)
+        dr, dc = next_r - r, next_c - c
+        candidates = tuple(
+            set(map(lambda x: "".join(x) + "A", permutations("v" * dr + "^" * -dr + ">" * dc + "<" * -dc)))
+        )
+        valid_candidates = [cand for cand in candidates if not crosses0(r, c, cand)]
+        assert len(valid_candidates) > 0
+        garden_path.append(valid_candidates)
+        r, c = next_r, next_c
+    return tuple(product(*garden_path))
 
 
 def eval_dirs(dirs):
@@ -124,18 +92,33 @@ def eval_nums(dirs):
     return out
 
 
-def part1(raw: str):
+@cache
+def cost_of_expansion(end_in_a: str, times_expanding: int) -> int:
+    assert end_in_a[-1] == "A"
+    assert times_expanding > 0
+    all_expansions = possible_expansions(end_in_a)
+    if times_expanding == 1:
+        combined_lengths = [sum(len(token) for token in expansion) for expansion in all_expansions]
+        return min(combined_lengths)
+    combined_lengths = [
+        sum(cost_of_expansion(token, times_expanding - 1) for token in expansion) for expansion in all_expansions
+    ]
+    return min(combined_lengths)
+
+
+def part1(raw: str, two=2):
     s = 0
-    for line in raw.splitlines():
-        # debug_print(npad2dirs(line))
-        # debug_print(dirs2dirs(npad2dirs(line)))
-        # debug_print(dirs2dirs(dirs2dirs(npad2dirs(line))))
-        s += min(map(len, dirs2dirs(dirs2dirs(npad2dirs(line))))) * int(line[:-1])
+    for code in raw.splitlines():
+        numeric_part = int(code[:-1])
+        len_shortest_sequence = min(
+            sum(cost_of_expansion(token, two) for token in code_expansion) for code_expansion in code_expansions(code)
+        )
+        s += len_shortest_sequence * numeric_part
     return s
 
 
 def part2(raw: str):
-    pass
+    return part1(raw, 25)
 
 
 test1 = """029A
@@ -158,21 +141,13 @@ expected2 = None
 
 def main():
     for line in test0.splitlines():
-        code, expected = line.split(": ")
-        a1 = min(npad2dirs(code), key=len)
-        assert eval_nums(a1) == code
-        a2 = min(dirs2dirs(npad2dirs(code)), key=len)
-        assert eval_nums(eval_dirs(a2)) == code
-        a3 = min(dirs2dirs(dirs2dirs(npad2dirs(code))), key=len)
-        assert eval_nums(eval_dirs(eval_dirs(a3))) == code
-        assert len(a3) == len(expected)
-        # 'v<<A>>^AvA^Av<<A>>^AAv<A<A>>^AAvAA<^A>Av<A>^AA<A>Av<A<A>>^AAAvA<^A>A'
-        # '<v<A>>^AvA^A<vA<AA>>^AAvA<^A>AAvA^A<vA>^AA<A>A<v<A>A>^AAAvA<^A>A'
+        code, answer = line.split(": ")
+        expected = int(code[:-1]) * len(answer)
+        test(part1, code, expected)
     test(part1, test1, expected1)
     raw = get_day(21)
-    benchmark(part1, raw)
-    test(part2, test2, expected2)
-    benchmark(part2, raw)
+    assert benchmark(part1, raw) == 248684
+    assert benchmark(part2, raw) == 307055584161760
 
 
 if __name__ == "__main__":
