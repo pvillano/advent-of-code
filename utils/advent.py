@@ -15,7 +15,7 @@ has_trace = hasattr(sys, "gettrace") and sys.gettrace() is not None
 has_breakpoint = sys.breakpointhook.__module__ != "sys"
 DEBUG = has_trace or has_breakpoint
 
-THIS_YEAR = datetime.datetime.today().year
+THIS_YEAR = 2024
 
 
 def get_day(day: int) -> str:
