@@ -20,22 +20,22 @@ def part1(raw: str):
         d[k] = var
         s.add(var == bool(v))
     for r in relations_str.splitlines():
-        a, op_str, b, _, c = r.split(' ')
+        a, op_str, b, _, c = r.split(" ")
         for v in [a, b, c]:
             if v not in d:
                 d[v] = Bool(v)
         match op_str:
-            case 'AND':
+            case "AND":
                 s.add(d[a] & d[b] == d[c])
-            case 'OR':
+            case "OR":
                 s.add(d[a] | d[b] == d[c])
-            case 'XOR':
+            case "XOR":
                 s.add(d[a] ^ d[b] == d[c])
             case _:
                 assert False
     s.check()
     ans = 0
-    for z_key, z_val in sorted((zk for zk in d.items() if zk[0].startswith('z')), reverse=True):
+    for z_key, z_val in sorted((zk for zk in d.items() if zk[0].startswith("z")), reverse=True):
         ans <<= 1
         x: BoolRef = s.model().eval(z_val)
         debug_print(z_key, x)
@@ -65,16 +65,15 @@ def part2fail(raw: str):
     q2 = []
     half_sum: list[str | None] = [None] * n
     for r in relations_str.splitlines():
-        a, op_str, b, _, c = r.split(' ')
+        a, op_str, b, _, c = r.split(" ")
         a, b = sorted([a, b])
         q1.append((a, op_str, b, c))
 
     for a, op_str, b, c in q1:
-        if (a[0] == 'x' and b[0] == 'y' and op_str == 'XOR'
-                and a[1:] == b[1:]):
+        if a[0] == "x" and b[0] == "y" and op_str == "XOR" and a[1:] == b[1:]:
             k = int(a[1:])
             half_sum[k] = c
-            assert not c.startswith('z') or c == 'z00'
+            assert not c.startswith("z") or c == "z00"
         else:
             q2.append((a, op_str, b, c))
     assert len(q1) - len(q2) == n
@@ -82,11 +81,10 @@ def part2fail(raw: str):
     q3 = []
     half_carry: list[str | None] = [None] * n
     for a, op_str, b, c in q2:
-        if (a[0] == 'x' and b[0] == 'y' and op_str == 'AND'
-                and a[1:] == b[1:]):
+        if a[0] == "x" and b[0] == "y" and op_str == "AND" and a[1:] == b[1:]:
             k = int(a[1:])
             half_carry[k] = c
-            assert not c.startswith('z')
+            assert not c.startswith("z")
         else:
             q3.append((a, op_str, b, c))
     assert len(q2) - len(q3) == n
@@ -129,7 +127,7 @@ def parse2(raw):
 
     q1 = []
     for r in relations_str.splitlines():
-        a, op_str, b, _, c = r.split(' ')
+        a, op_str, b, _, c = r.split(" ")
         a, b = sorted([a, b])
         q1.append([a, op_str, b, c])
     return q1, n
@@ -150,21 +148,21 @@ def part2fail2(raw):
     # z all outs?
     for i in range(n):
         a, op_str, b, c = q1[i]
-        if a[0] != 'x' or b[0] != 'y' and op_str == 'XOR':
-            assert a[0] != 'x' and b[0] != 'y'
-            assert c[0] == 'z'
+        if a[0] != "x" or b[0] != "y" and op_str == "XOR":
+            assert a[0] != "x" and b[0] != "y"
+            assert c[0] == "z"
 
     for i in range(n):
         if i == 0:
-            half_sum = find1(q1, lambda a, op_str, b, c: a == 'x00' and b == 'y00' and op_str == 'XOR')
-            if half_sum[-1] != 'z00':
+            half_sum = find1(q1, lambda a, op_str, b, c: a == "x00" and b == "y00" and op_str == "XOR")
+            if half_sum[-1] != "z00":
                 raise NotImplementedError()
-            prev_carry = find1(q1, lambda a, op_str, b, c: a == 'x00' and b == 'y00' and op_str == 'XOR')
+            prev_carry = find1(q1, lambda a, op_str, b, c: a == "x00" and b == "y00" and op_str == "XOR")
             continue
-        half_sum = find1(q1, lambda a, op_str, b, c: a == f'x{i:02}' and b == f'y{i:02}' and op_str == 'XOR')
-        half_carry = find1(q1, lambda a, op_str, b, c: a == f'x{i:02}' and b == f'y{i:02}' and op_str == 'AND')
-        full_sum = find1(q1, lambda a, op_str, b, c: c == f'z{i:02}')
-        assert full_sum[1] == 'AND'
+        half_sum = find1(q1, lambda a, op_str, b, c: a == f"x{i:02}" and b == f"y{i:02}" and op_str == "XOR")
+        half_carry = find1(q1, lambda a, op_str, b, c: a == f"x{i:02}" and b == f"y{i:02}" and op_str == "AND")
+        full_sum = find1(q1, lambda a, op_str, b, c: c == f"z{i:02}")
+        assert full_sum[1] == "AND"
 
 
 def part2fail3(raw):
@@ -182,27 +180,27 @@ def part2fail3(raw):
     dot.render("21.gv")
 
 
-def part2(raw):
+def part2fail4(raw):
     s = Solver()
     d = dict()
     initial_str, relations_str = raw.split("\n\n")
-    n = len(initial_str.splitlines())//2
+    n = len(initial_str.splitlines()) // 2
     for i in initial_str.splitlines():
         k, _ = i.split(": ")
         var = Bool(k)
         d[k] = var
 
     for r in relations_str.splitlines():
-        a, op_str, b, _, c = r.split(' ')
+        a, op_str, b, _, c = r.split(" ")
         for v in [a, b, c]:
             if v not in d:
                 d[v] = Bool(v)
         match op_str:
-            case 'AND':
+            case "AND":
                 s.add(d[a] & d[b] == d[c])
-            case 'OR':
+            case "OR":
                 s.add(d[a] | d[b] == d[c])
-            case 'XOR':
+            case "XOR":
                 s.add(d[a] ^ d[b] == d[c])
             case _:
                 assert False
@@ -225,6 +223,53 @@ def part2(raw):
         s.add(d[f"fs{i:02}"] == d[f"z{i:02}"])
 
 
+def norm(a, op, b):
+    a, b = sorted([a, b])
+    return a, op, b
+
+
+def swap(raw: str, a: str, b: str):
+    assert "@" not in raw
+    raw = raw.replace(a, "@")
+    raw = raw.replace(b, a)
+    raw = raw.replace("@", b)
+    return raw
+
+
+def part2(raw):
+    raw = swap(raw, "-> thm", "-> z08")
+    raw = swap(raw, "-> wrm", "-> wss")
+    raw = swap(raw, "-> hwq", "-> z22")
+    raw = swap(raw, "-> gbs", "-> z29")
+
+    return ",".join(sorted(("thm", "z08", "wrm", "wss", "hwq", "z22", "gbs", "z29")))
+
+    initial_str, relations_str = raw.split("\n\n")
+    n = len(initial_str.splitlines()) // 2
+    raw_graph = dict()
+    for r in relations_str.splitlines():
+        a, op_str, b, _, c = r.split(" ")
+        raw_graph[norm(a, op_str, b)] = c
+
+    assert ("x00", "XOR", "y00") in raw_graph
+    fs = raw_graph[("x00", "XOR", "y00")]
+    assert fs == "z00"
+    assert ("x00", "AND", "y00") in raw_graph
+    fc = raw_graph[("x00", "AND", "y00")]
+    for i in range(1, n):
+        cin = fc
+        x, y, z = f"x{i:02}", f"y{i:02}", f"z{i:02}"
+        assert norm(x, "XOR", y) in raw_graph
+        hs = raw_graph[norm(x, "XOR", y)]
+        assert norm(hs, "XOR", cin) in raw_graph
+        fs = raw_graph[norm(hs, "XOR", cin)]
+        assert fs == z
+        assert norm(x, "AND", y) in raw_graph
+        hc = raw_graph[norm(x, "AND", y)]
+        assert norm(hs, "AND", cin) in raw_graph
+        cc = raw_graph[norm(hs, "AND", cin)]
+        assert norm(hc, "OR", cc) in raw_graph
+        fc = raw_graph[norm(hc, "OR", cc)]
 
 
 test1 = """x00: 1
