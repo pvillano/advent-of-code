@@ -17,7 +17,7 @@ NESW_RC = ((-1, 0), (0, 1), (1, 0), (0, -1))
 NESW_XY = ((0, 1), (1, 0), (0, -1), (-1, 0))
 
 
-def transpose(iterable: Iterable[Collection]):
+def transpose[T](iterable: Iterable[Collection[T]]) -> list[list[T]]:
     iterable = list(iterable)
     assert len(set(map(len, iterable))) == 1, "Matrix must not be jagged"
     return list(map(list, zip(*iterable)))
