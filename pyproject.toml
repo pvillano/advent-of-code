@@ -1,9 +1,10 @@
 [tool.poetry]
-name = "advent2024"
+name = "advent-of-code"
 version = "0.1.0"
 description = ""
-authors = ["Peter (Rocky) Villano <peter.s.villano@gmail.com>"]
+authors = ["Peter (Rocky) Villano <peter@saej.in>"]
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.13"
