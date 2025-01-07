@@ -1,6 +1,9 @@
-from utils import benchmark, get_input, test
+from utils import benchmark, test
+from utils.advent import get_input
+from utils.itertools2 import degenerate
 
 
+@degenerate
 def parse(raw: str):
     return raw
 
