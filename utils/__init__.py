@@ -9,7 +9,7 @@ from . import printing
 from . import advent
 from . import submit
 
-from .advent import test, benchmark, get_day
+from .advent import test, benchmark, get_input
 
 __all__ = [
     "advent",
@@ -23,6 +23,6 @@ __all__ = [
     "printing",
     "submit",
     "benchmark",
-    "get_day",
+    "get_input",
     "test",
 ]

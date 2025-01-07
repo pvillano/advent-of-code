@@ -1,10 +1,11 @@
-__all__ = ["benchmark", "DEBUG", "get_day", "test"]
+__all__ = ["benchmark", "DEBUG", "get_input", "test"]
 
 import datetime
 import os
 import sys
 import time
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 import requests
@@ -15,25 +16,29 @@ has_trace = hasattr(sys, "gettrace") and sys.gettrace() is not None
 has_breakpoint = sys.breakpointhook.__module__ != "sys"
 DEBUG = has_trace or has_breakpoint
 
-THIS_YEAR = 2024
-
-
-def get_day(day: int) -> str:
+def get_input(__filename__: str) -> str:
     """
-    :param day:
+    :param __filename__: a path ending in YYYY/dayDD.py
     :return:
     """
-
-    filename = f"input{day:02d}.txt"
-    if not os.path.exists(filename):
-        with open(".token", "r") as token_file:
+    py_path = Path(__filename__)
+    year_path, project_root, *_ = py_path.parents
+    year = year_path.name
+    day = int(py_path.name.removeprefix("day").removesuffix(".py"))
+    out_file = project_root.joinpath(".inputs", year, f"input{day:02}.txt")
+    token_path = project_root.joinpath(".token")
+    # token_path = os.path.join(project_root, ".token")
+    if not os.path.exists(out_file):
+        Path("").mkdir(parents=True, exist_ok=True)
+        with open(token_path, "r") as token_file:
             cookies = {"session": token_file.read()}
-        response = requests.get(f"https://adventofcode.com/{THIS_YEAR}/day/{day}/input", cookies=cookies)
+        response = requests.get(f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies)
         response.raise_for_status()
-        with open(filename, "w") as cache_file:
+        out_file.parent.mkdir(exist_ok=True)
+        with open(out_file, "w") as cache_file:
             cache_file.write(response.text)
 
-    with open(filename) as cache_file:
+    with open(out_file) as cache_file:
         return cache_file.read().rstrip("\n")
 
 
