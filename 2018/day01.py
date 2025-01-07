@@ -1,23 +1,29 @@
 from utils import benchmark, test
 from utils.advent import get_input
+from utils.itertools2 import degenerate
 
 
+@degenerate
 def parse(raw: str):
-    return raw
+    for line in raw.splitlines():
+        line = line.removeprefix("+")
+        yield int(line)
+
 
 
 def part1(raw: str):
-    parse(raw)
-    print(raw)
+    return sum(parse(raw))
 
 
 def part2(raw: str):
     parse(raw)
 
 
-test1 = """"""
+test1 = """+1
++1
+-2"""
 
-expected1 = None
+expected1 = 0
 
 test2 = test1
 expected2 = None
