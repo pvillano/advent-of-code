@@ -1,0 +1,8 @@
+input*.txt
+.idea/
+
+__pycache__
+
+venv
+
+.token
