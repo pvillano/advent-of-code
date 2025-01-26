@@ -1,14 +1,13 @@
-from collections import Counter
+from collections import Counter, deque
 from itertools import product, chain
+
+import numpy as np
 
 from utils import benchmark, test
 from utils.advent import get_input
 from utils.itertools2 import degenerate
 from utils.parsing import extract_ints
-
-import numpy as np
-
-from utils.printing import debug_print_grid, debug_print
+from utils.printing import debug_print
 
 
 @degenerate
@@ -16,7 +15,9 @@ def parse(raw: str):
     for line in raw.splitlines():
         yield extract_ints(line)
 
+
 azAZ = "".join(map(chr, range(ord('a'), ord('z') + 1))) + "".join(map(chr, range(ord('A'), ord('Z') + 1)))
+
 
 def part1(raw: str):
     coords = parse(raw)
@@ -27,7 +28,7 @@ def part1(raw: str):
     assert min_x > 0 and min_y > 0
     grid = np.full((max_x + 1, max_y + 1), " ", np.character)
     for i, (x, y) in enumerate(coords):
-        grid[x,y] = azAZ[i] # somewhat gracefully handle 52
+        grid[x, y] = azAZ[i]  # somewhat gracefully handle 52
 
     def vn_hood(x, y):
         if x > 0:
@@ -52,11 +53,11 @@ def part1(raw: str):
                 continue
             changed = True
             if len(interesting_neighbours) == 1:
-                new_grid[x,y] = next(iter(interesting_neighbours))
+                new_grid[x, y] = next(iter(interesting_neighbours))
             else:
-                new_grid[x,y] = '.'
+                new_grid[x, y] = '.'
         grid = new_grid
-        debug_print("\n".join(b''.join(row).decode("utf-8") for  row in grid.transpose()))
+        debug_print("\n".join(b''.join(row).decode("utf-8") for row in grid.transpose()))
         debug_print("-" * grid.shape[1])
         if not changed:
             break
@@ -68,9 +69,40 @@ def part1(raw: str):
     pass
 
 
-
 def part2(raw: str):
-    parse(raw)
+    if raw == test1:
+        max_tot_dist = 32
+    else:
+        max_tot_dist = 10000
+    coords = parse(raw)
+
+    def d_all(x, y):
+        return sum(abs(x - xx) + abs(y - yy) for xx, yy in coords)
+
+    def vn_hood(x, y):
+        yield x - 1, y
+        yield x, y - 1
+        yield x + 1, y
+        yield x, y + 1
+
+    cx = sum(x for x, _ in coords) // len(coords)
+    cy = sum(y for _, y in coords) // len(coords)
+
+    seen = set()
+
+    q = deque([(cx, cy)])
+    while q:
+        xy = q.pop()
+        if xy in seen:
+            continue
+        x, y = xy
+        if d_all(x, y) >= max_tot_dist:
+            continue
+        seen.add(xy)
+        for xy2 in vn_hood(x, y):
+            if xy2 not in seen:
+                q.append(xy2)
+    return len(seen)
 
 
 test1 = """1, 1
@@ -83,7 +115,7 @@ test1 = """1, 1
 expected1 = 17
 
 test2 = test1
-expected2 = None
+expected2 = 16
 
 
 def main():
