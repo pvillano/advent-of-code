@@ -34,7 +34,7 @@ def get_input(__filename__: str) -> str:
             cookies = {"session": token_file.read()}
         response = requests.get(f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies)
         response.raise_for_status()
-        out_file.parent.mkdir(exist_ok=True)
+        out_file.parent.mkdir(exist_ok=True, parents=True)
         with open(out_file, "w") as cache_file:
             cache_file.write(response.text)
 
