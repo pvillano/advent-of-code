@@ -9,14 +9,16 @@ __all__ = [
 
 from collections.abc import Callable, Hashable
 
-AdjacencyListType = dict[Hashable, list[Hashable]] | list[list[int]]
+type AdjacencyDictType[T] = dict[T, list[T]]
+
+type AdjacencyListType = AdjacencyDictType | list[list[int]]
 
 
 def bfs(graph: AdjacencyListType, key: Callable):
     raise NotImplementedError()
 
 
-def densify_keys(adj_list: dict[Hashable, list[Hashable]]) -> tuple[list[list[int]], list, dict]:
+def densify_keys[T](adj_list: AdjacencyDictType[T]) -> tuple[list[list[int]], list[T], dict[T, int]]:
     """
     Replaces an adjacency list with arbitrary nodes with one using only ints
 
@@ -60,7 +62,7 @@ def is_dag(adj_list: AdjacencyListType) -> bool:
     return len(a) == 0
 
 
-def reverse_edges(adj_list: AdjacencyListType) -> AdjacencyListType:
+def reverse_edges[T: AdjacencyListType](adj_list: T) -> T:
     """
     Reverses the edges in an adjacency list graph
     """
