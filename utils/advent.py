@@ -31,7 +31,7 @@ def get_input(__filename__: str) -> str:
     if not os.path.exists(out_file):
         Path("").mkdir(parents=True, exist_ok=True)
         with open(token_path, "r") as token_file:
-            cookies = {"session": token_file.read()}
+            cookies = {"session": token_file.read().strip()}
         response = requests.get(f"https://adventofcode.com/{year}/day/{day}/input", cookies=cookies)
         response.raise_for_status()
         out_file.parent.mkdir(exist_ok=True, parents=True)
