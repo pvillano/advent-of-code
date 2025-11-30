@@ -1,6 +1,6 @@
 from itertools import count
 
-from utils import benchmark, get_day, test
+from utils import benchmark, get_input, test
 from utils.grids import NEWS_XY
 from utils.parsing import extract_ints
 from utils.printing import debug_print, debug_print_sparse_grid
@@ -72,7 +72,7 @@ expected2 = None
 
 def main():
     test(part1, test1, expected1)
-    raw = get_day(14)
+    raw = get_input(__file__)
     benchmark(part1, raw)
     benchmark(part2, raw)
 

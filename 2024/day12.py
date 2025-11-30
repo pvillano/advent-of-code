@@ -1,6 +1,6 @@
 from itertools import groupby
 
-from utils import benchmark, get_day, test
+from utils import benchmark, get_input, test
 from utils.grids import NEWS_RC
 from utils.printing import debug_print
 
@@ -168,7 +168,7 @@ def main():
     test(part1, test1, expected1)
     test(part1, test11, expected11)
     test(part1, test12, expected12)
-    raw = get_day(12)
+    raw = get_input(__file__)
     benchmark(part1, raw)
     test(part2, test2, expected2)
     test(part2, test21, expected21)

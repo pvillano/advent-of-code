@@ -1,6 +1,6 @@
 import z3
 
-from utils import benchmark, get_day, test
+from utils import benchmark, get_input, test
 from utils.parsing import extract_ints
 
 
@@ -103,7 +103,7 @@ expected2 = 117440
 
 
 def main():
-    raw = get_day(17)
+    raw = get_input(__file__)
     benchmark(part2, raw)
     test(part1, test1, expected1)
     benchmark(part1, raw)

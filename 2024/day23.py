@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from utils import benchmark, get_day, test
+from utils import benchmark, get_input, test
 
 
 def parse(raw: str):
@@ -99,7 +99,7 @@ expected2 = "co,de,ka,ta"
 
 def main():
     test(part1, test1, expected1)
-    raw = get_day(23)
+    raw = get_input(__file__)
     benchmark(part1, raw)
     test(part2, test2, expected2)
     benchmark(part2, raw)

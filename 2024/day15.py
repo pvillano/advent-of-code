@@ -1,7 +1,7 @@
 from copy import deepcopy
 from itertools import product
 
-from utils import get_day, test, benchmark
+from utils import get_input, test, benchmark
 from utils.grids import NEWS_RC
 from utils.printing import debug_print_grid, debug_print
 
@@ -222,7 +222,7 @@ expected2 = 9021
 
 def main():
     # test(part1, test1, expected1)
-    raw = get_day(15)
+    raw = get_input(__file__)
     # benchmark(part1, raw)
     test(part2, test11, expected2)
     benchmark(part2, raw)

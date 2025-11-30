@@ -1,7 +1,7 @@
 from functools import cache
 from itertools import permutations, product
 
-from utils import benchmark, get_day, test
+from utils import benchmark, get_input, test
 from utils.grids import grid_index, NEWS_RC
 
 dpad = [" ^A", "<v>"]
@@ -79,7 +79,7 @@ def main():
         expected = int(code[:-1]) * len(answer)
         test(part1, code, expected)
     test(part1, test1, expected1)
-    raw = get_day(21)
+    raw = get_input(__file__)
     assert benchmark(part1, raw) == 248684
     assert benchmark(part2, raw) == 307055584161760
 

@@ -1,7 +1,7 @@
 from collections import deque
 from math import inf
 
-from utils import benchmark, get_day, test
+from utils import benchmark, get_input, test
 from utils.grids import NESW_RC
 from utils.parsing import extract_ints
 
@@ -98,7 +98,7 @@ expected2 = (6, 1)
 
 def main():
     test(part1, test1, expected1)
-    raw = get_day(18)
+    raw = get_input(__file__)
     benchmark(part1, raw)
     test(part2, test2, expected2)
     benchmark(part2, raw)

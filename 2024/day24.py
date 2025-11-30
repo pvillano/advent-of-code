@@ -1,7 +1,7 @@
 import graphviz
 from z3 import Bool, Solver, BoolRef, prove, unsat
 
-from utils import benchmark, get_day
+from utils import benchmark, get_input
 from utils.printing import debug_print
 
 
@@ -291,7 +291,7 @@ expected2 = None
 
 def main():
     # test(part1, test1, expected1)
-    raw = get_day(24)
+    raw = get_input(__file__)
     # benchmark(part1, raw)
     # test(part2, test2, expected2)
     benchmark(part2, raw)

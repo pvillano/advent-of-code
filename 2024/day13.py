@@ -1,4 +1,4 @@
-from utils import test, get_day, benchmark
+from utils import test, get_input, benchmark
 from utils.parsing import extract_ints
 
 
@@ -43,7 +43,7 @@ expected2 = 875318608908
 
 def main():
     test(part1, test1, expected1)
-    raw = get_day(13)
+    raw = get_input(__file__)
     benchmark(part1, raw)
     test(part2, test2, expected2)
     benchmark(part2, raw)

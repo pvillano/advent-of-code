@@ -1,6 +1,6 @@
 from itertools import product
 
-from utils import benchmark, get_day, test
+from utils import benchmark, get_input, test
 from utils.grids import transpose
 
 
@@ -76,7 +76,7 @@ expected1 = 3
 
 def main():
     test(part1, test1, expected1)
-    raw = get_day(25)
+    raw = get_input(__file__)
     benchmark(part1, raw)
 
 

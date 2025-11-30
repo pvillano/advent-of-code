@@ -1,5 +1,5 @@
 from itertools import starmap
-from utils import benchmark, get_day, test
+from utils import benchmark, get_input, test
 from utils.parallel import starmap16
 
 
@@ -146,7 +146,7 @@ expected2 = 6
 
 def main():
     test(part1, test1, expected1)
-    raw = get_day(6)
+    raw = get_input(__file__)
     benchmark(part1, raw)
     test(part2parallel, test2, expected2)
     benchmark(part2parallel, raw)
