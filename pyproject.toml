@@ -1,27 +1,29 @@
-[tool.poetry]
+[project]
 name = "advent-of-code"
 version = "0.1.0"
 description = ""
-authors = ["Peter (Rocky) Villano <peter@saej.in>"]
+authors = [
+    {name = "Peter (Rocky) Villano",email = "peter@saej.in"}
+]
 readme = "README.md"
-package-mode = false
+requires-python = ">=3.14"
+dependencies = [
+    "requests",
+    "numpy",
+    "tqdm",
+    "trio",
+    "trio-parallel",
+    "z3-solver",
+    "graphviz",
+    "lxml"
+]
 
-[tool.poetry.dependencies]
-python = "^3.13"
-requests = "*"
-numpy = "*"
-tqdm = "*"
-trio = "*"
-trio-parallel = "*"
-z3-solver = "*"
-black = "*"
-graphviz = "^0.20.3"
-lxml = "^5.3.0"
+[dependency-groups]
+dev = [
+    "black"
+]
 
 
 [build-system]
-requires = ["poetry-core"]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.black]
-line-length = 120
