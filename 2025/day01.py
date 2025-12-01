@@ -6,38 +6,40 @@ from utils.itertools2 import degenerate
 @degenerate
 def parse(raw: str):
     for line in raw.splitlines():
-        yield line[0], int(line[1:])
+        if line[0] == 'L':
+            yield -int(line[1:])
+        else:
+            yield int(line[1:])
     return raw
 
 
 def part1(raw: str):
-    cnt = 0
-    p = 50
-    for lr, x in parse(raw):
-        if lr == 'L':
-            p -= x
-        else:
-            p += x
-        p %= 100
-        if p == 0:
-            cnt += 1
-    return cnt
+    count = 0
+    dial = 50
+    for offset in parse(raw):
+        dial += offset
+        dial %= 100
+        if dial == 0:
+            count += 1
+    return count
 
 
 def part2(raw: str):
-    cnt = 0
-    p = 50
-    for lr, x in parse(raw):
-        if lr == 'L':
-            dx = -1
-        else:
-            dx = 1
-        for i in range(x):
-            p += dx
-            p %= 100
-            if p == 0:
-                cnt += 1
-    return cnt
+    count = 0
+    dial = 50
+    for offset in parse(raw):
+        assert dial >= 0
+        assert offset != 0
+        next_dial = dial + offset
+        if next_dial >= 100:
+            count += next_dial // 100
+        elif next_dial <= 0:
+            count += (-next_dial) // 100
+            if dial > 0:
+                count += 1
+        dial = next_dial % 100
+
+    return count
 
 
 test1 = """L68
