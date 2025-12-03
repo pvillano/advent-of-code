@@ -14,8 +14,8 @@ def part1(raw: str):
     total_joltage = 0
     for bank in parse(raw):
         largest_not_last = max(bank[:-1])
-        idx_lnn = bank.index(largest_not_last)
-        following_largest = max(bank[idx_lnn + 1:])
+        idx_lnl = bank.index(largest_not_last)
+        following_largest = max(bank[idx_lnl + 1:])
         total_joltage += largest_not_last * 10 + following_largest
     return total_joltage
 
@@ -29,11 +29,8 @@ def part2(raw: str):
             lnl = max(bank[idx_prev_used + 1:len(bank) - (12 - i - 1)])
             bank_joltage *= 10
             bank_joltage += lnl
-            idx_prev_used = bank[idx_prev_used+1:].index(lnl) + idx_prev_used + 1
-        debug_print(bank_joltage)
+            idx_prev_used = bank.index(lnl, idx_prev_used + 1)
         total_joltage += bank_joltage
-    if DEBUG:
-        exit(1)
     return total_joltage
 
 
