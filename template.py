@@ -25,9 +25,11 @@ expected2 = None
 
 
 def main():
-    test(part1, test1, expected1)
     raw = get_input(__file__)
+
+    test(part1, test1, expected1)
     benchmark(part1, raw)
+
     test(part2, test2, expected2)
     benchmark(part2, raw)
 
