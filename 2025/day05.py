@@ -16,7 +16,7 @@ def parse(raw: str):
 
 
 def part1(raw: str):
-    ranges, ingredients = (parse(raw))
+    ranges, ingredients = parse(raw)
     n = 0
     for ingredient in ingredients:
         if any(map(lambda r: ingredient in r, ranges)):
@@ -31,11 +31,10 @@ def part2(raw: str):
     stack = [ranges[0]]
     for r in ranges[1:]:
         start, stop = r.start, r.stop
-        while stack and (start in stack[-1] or stop - 1 in stack[-1] or stack[-1].start in r or stack[-1].stop in r):
+        while stack and start < stack[-1].stop and stack[-1].start < stop:
             final = stack.pop()
             start = min(final.start, start)
             stop = max(final.stop, stop)
-            r = range(start, stop)
         stack.append(range(start, stop))
     n = 0
     for r in stack:
@@ -72,13 +71,11 @@ expected22 = 3
 
 def main():
     raw = get_input(__file__)
-    # test(part1, test1, expected1)
-    # benchmark(part1, raw)
+    test(part1, test1, expected1)
+    benchmark(part1, raw)
     test(part2, test2, expected2)
     test(part2, test22, expected22)
     benchmark(part2, raw)
-    print("not 361325519285785")
-    print("not 354572768818987")
 
 
 if __name__ == "__main__":
