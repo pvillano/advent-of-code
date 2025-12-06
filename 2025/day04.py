@@ -14,23 +14,21 @@ def part1(raw: str):
     parsed = parse(raw)
     accessible = 0
 
-    for row_number, row in enumerate(parsed):
-        for col_number, cell in enumerate(row):
+    for origin_row, row in enumerate(parsed):
+        for origin_col, cell in enumerate(row):
             if cell != '@':
                 continue
             neighbours = -1
             for dr in [-1, 0, 1]:
                 for dc in [-1, 0, 1]:
-                    rr = row_number + dr
-                    cc = col_number + dc
-                    if (rr in range(len(parsed))
-                            and cc in range(len(parsed[0]))
-                            and parsed[rr][cc] == '@'):
+                    neighbour_row = origin_row + dr
+                    neighbour_col = origin_col + dc
+                    if (neighbour_row in range(len(parsed))
+                            and neighbour_col in range(len(parsed[0]))
+                            and parsed[neighbour_row][neighbour_col] == '@'):
                         neighbours += 1
             if neighbours < 4:
                 accessible += 1
-                debug_print(row_number, col_number)
-        debug_print()
     return accessible
 
 
@@ -38,25 +36,23 @@ def part2(raw: str):
     parsed = [list(row) for row in parse(raw)]
     changed = True
     while changed:
-        next_parsed = deepcopy(parsed)
         changed = False
-        for row_number, row in enumerate(parsed):
-            for col_number, cell in enumerate(row):
+        for origin_row, row in enumerate(parsed):
+            for origin_col, cell in enumerate(row):
                 if cell != '@':
                     continue
                 neighbours = -1
                 for dr in [-1, 0, 1]:
                     for dc in [-1, 0, 1]:
-                        rr = row_number + dr
-                        cc = col_number + dc
+                        rr = origin_row + dr
+                        cc = origin_col + dc
                         if (rr in range(len(parsed))
                                 and cc in range(len(parsed[0]))
                                 and parsed[rr][cc] == '@'):
                             neighbours += 1
                 if neighbours < 4:
-                    next_parsed[row_number][col_number] = '.'
+                    parsed[origin_row][origin_col] = '.'
                     changed = True
-        parsed = next_parsed
     return sum([sum([1 for _ in row if _ == '@']) for row in parse(raw)]) - sum(
         [sum([1 for _ in row if _ == '@']) for row in parsed])
 
