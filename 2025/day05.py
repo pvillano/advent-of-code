@@ -1,5 +1,6 @@
 from utils import benchmark, test
 from utils.advent import get_input
+from utils.interval import IntervalSet
 from utils.itertools2 import degenerate
 
 
@@ -43,6 +44,12 @@ def part2(raw: str):
     return n
 
 
+def part2_interval_lib(raw: str):
+    ranges, _ = parse(raw)
+    interval_set = IntervalSet(ranges)
+    return sum(stop - start for start, stop in interval_set)
+
+
 test1 = """3-5
 10-14
 16-20
@@ -61,21 +68,15 @@ expected1 = 3
 test2 = test1
 expected2 = 14
 
-test22 = """0-0
-1-1
-2-2
-
-1"""
-expected22 = 3
-
 
 def main():
     raw = get_input(__file__)
     test(part1, test1, expected1)
     benchmark(part1, raw)
     test(part2, test2, expected2)
-    test(part2, test22, expected22)
     benchmark(part2, raw)
+    test(part2_interval_lib, test2, expected2)
+    benchmark(part2_interval_lib, raw)
 
 
 if __name__ == "__main__":

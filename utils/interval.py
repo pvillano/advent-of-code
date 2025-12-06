@@ -8,8 +8,7 @@ def range_overlaps(a: range, b: range):
 
 class IntervalSet(collections.abc.Set):
     """
-    Can be constructed from
-    a list of ranges [a,b)
+    Constructed from a list of ranges [a,b)
 
     invariants:
     __intervals is a list of non-overlapping ranges
@@ -17,24 +16,25 @@ class IntervalSet(collections.abc.Set):
 
     __intervals: list[tuple[int, int]]
 
-    def __init__(self, __iterable: Iterable[tuple[int, int]] = None):
-        if __iterable is None:
+    def __init__(self, iterable: Iterable[tuple[int, int] | range] | None = None):
+        if iterable is None:
             self.__intervals = []
             return
-        self.__intervals = list(__iterable)
+        self.__intervals = list([((i.start, i.stop) if isinstance(i, range) else i ) for i in iterable])
         self.__normalize()
 
     def __normalize(self):
-        if len(self.__intervals) == 0:
+        if len(self.__intervals) <= 1:
             return
-        self.__intervals.sort()
-        new = [self.__intervals[0]]
-        for r in self.__intervals[1:]:
-            start, end = new[-1]
-            if start <= r[0] < end:
-                stop = max(new[-1][1], r[1])
-                new[-1] = (new[-1][0], stop)
-        self.__intervals = new
+        self.__intervals.sort(key=lambda x: x[1])
+        stack = [self.__intervals[0]]
+        for start, stop in self.__intervals[1:]:
+            while stack and start < stack[-1][1] and stack[-1][0] < stop:
+                final = stack.pop()
+                start = min(final[0], start)
+                stop = max(final[1], stop)
+            stack.append((start, stop))
+        self.__intervals = stack
 
     def __contains__(self, item: int):
         for start, end in self.__intervals:
