@@ -1,8 +1,9 @@
+import operator
 from functools import reduce
 
 from utils import benchmark, test
 from utils.advent import get_input
-from utils.grids import rotate_counterclockwise, transpose, rotate_clockwise
+from utils.grids import rotate_counterclockwise, rotate_clockwise
 from utils.itertools2 import degenerate
 
 
@@ -13,8 +14,10 @@ def parse(raw: str):
     yield [x for x in raw.splitlines()[-1].split(' ') if x]
 
 
-operators = {'+': lambda x, y: y + x, '-': lambda x, y: y - x, '*': lambda x, y: y * x, '/': lambda x, y: y / x,
-             '^': lambda x, y: y ** x}
+operators = {
+    '+': operator.add,
+    '*': operator.mul
+}
 
 
 def part1(raw: str):
@@ -29,19 +32,20 @@ def part1(raw: str):
 
 def part2(raw: str):
     lines = raw.splitlines()
-    cephup = rotate_counterclockwise(lines)
+    rotated = rotate_counterclockwise(lines)
+    rejoined = ["".join(line) for line in rotated]
     s = 0
     stack = []
-    for line in cephup:
-        line = "".join(line).strip()
+    for line in rejoined:
+        line = line.strip()
         if len(line) == 0:
             assert stack == []
-        elif line[-1] in '+*':  # final in a comp
-            stack.append(int("".join(line[:-1]).strip()))
+        elif line[-1] in '+*':  # final number in a problem
+            stack.append(int(line[:-1]))
             s += reduce(operators[line[-1]], stack)
             stack = []
         else:
-            stack.append(int("".join(line).strip()))
+            stack.append(int(line))
 
     return s
 
