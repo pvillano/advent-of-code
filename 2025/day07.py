@@ -5,51 +5,48 @@ from utils.itertools2 import degenerate
 
 @degenerate
 def parse(raw: str):
-    return raw.strip().splitlines()
+    s_row, *rest = raw.strip().splitlines()
+    return s_row.index('S'), rest
 
 
 def part1(raw: str):
-    atlas = parse(raw)
-    beam_here = [False for _ in atlas[0]]
-    beam_here[atlas[0].index('S')] = True
+    s_index, atlas = parse(raw)
+    beams = [False] * len(atlas[0])
+    beams[s_index] = True
     split_count = 0
-    for row in atlas[1:]:
-        next_beam = [False for _ in atlas[0]]
-        for i in range(len(beam_here)):
+    for row in atlas:
+        next_beams = [False for _ in atlas[0]]
+        for i in range(len(beams)):
             # scatter not gather
-            if not beam_here[i]:
+            if not beams[i]:
                 continue
             if row[i] == '.':
-                next_beam[i] = True
+                next_beams[i] = True
                 continue
-            assert row[i] == '^'
             split_count += 1
-            if i - 1 >= 0:
-                next_beam[i - 1] = True
-                next_beam[i + 1] = True
-        beam_here = next_beam
+            next_beams[i - 1] = True
+            next_beams[i + 1] = True
+        beams = next_beams
     return split_count
 
 
 def part2(raw: str):
-    atlas = parse(raw)
-    timeline_count = [0 for _ in atlas[0]]
-    timeline_count[atlas[0].index('S')] = 1
+    s_index, atlas = parse(raw)
+    superpositions = [0] * len(atlas[0])
+    superpositions[s_index] = 1
     for row in atlas[1:]:
-        next_beam = [False for _ in atlas[0]]
-        for i in range(len(timeline_count)):
+        next_superpositions = [0 for _ in atlas[0]]
+        for i in range(len(superpositions)):
             # scatter not gather
-            if not timeline_count[i]:
+            if not superpositions[i]:
                 continue
             if row[i] == '.':
-                next_beam[i] += timeline_count[i]
+                next_superpositions[i] += superpositions[i]
                 continue
-            assert row[i] == '^'
-            if i - 1 >= 0:
-                next_beam[i - 1] += timeline_count[i]
-                next_beam[i + 1] += timeline_count[i]
-        timeline_count = next_beam
-    return sum(timeline_count)
+            next_superpositions[i - 1] += superpositions[i]
+            next_superpositions[i + 1] += superpositions[i]
+        superpositions = next_superpositions
+    return sum(superpositions)
 
 
 test1 = """.......S.......
