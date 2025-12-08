@@ -9,7 +9,7 @@ __all__ = [
 
 from collections.abc import Callable, Hashable
 
-type AdjacencyDictType[T] = dict[T, list[T]]
+type AdjacencyDictType[T: Hashable] = dict[T, list[T]]
 
 type AdjacencyListType = AdjacencyDictType | list[list[int]]
 
@@ -18,7 +18,7 @@ def bfs(graph: AdjacencyListType, key: Callable):
     raise NotImplementedError()
 
 
-def densify_keys[T](adj_list: AdjacencyDictType[T]) -> tuple[list[list[int]], list[T], dict[T, int]]:
+def densify_keys[T: Hashable](adj_list: AdjacencyDictType[T]) -> tuple[list[list[int]], list[T], dict[T, int]]:
     """
     Replaces an adjacency list with arbitrary nodes with one using only ints
 
@@ -28,7 +28,7 @@ def densify_keys[T](adj_list: AdjacencyDictType[T]) -> tuple[list[list[int]], li
     """
     itoa = sorted(adj_list.keys())
     atoi = {val: idx for idx, val in enumerate(itoa)}
-    new_adj_list = [[] for k in range(len(itoa))]
+    new_adj_list = [[] for _ in range(len(itoa))]
     for key, neighbors in adj_list.items():
         i = atoi[key]
         new_neighbors = list(map(lambda x: atoi[x], neighbors))
