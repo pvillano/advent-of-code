@@ -8,6 +8,7 @@ from . import parsing
 from . import printing
 from . import advent
 from . import submit
+from .UnionFind import UnionFind
 
 from .advent import test, benchmark, get_input
 
@@ -25,4 +26,5 @@ __all__ = [
     "benchmark",
     "get_input",
     "test",
+    "UnionFind",
 ]

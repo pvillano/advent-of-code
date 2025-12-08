@@ -1,11 +1,11 @@
 import operator
+from collections import defaultdict
 from functools import reduce
 from heapq import heapify, heappop
 from itertools import starmap
 
-from black.trans import defaultdict
-
 from utils import benchmark, test
+from utils import UnionFind
 from utils.advent import get_input
 from utils.itertools2 import degenerate
 from utils.parsing import extract_ints
@@ -61,45 +61,8 @@ def part1(raw: str):
     return reduce(operator.mul, connected_component_list[:3])
 
 
-class UnionFind[T]:
-    toIndex: dict[T, int]
-    pointers: list[int]
-    ranks: list[int]
-
-    def __init__(self, items: list[T]):
-        self.toIndex = {item: i for i, item in enumerate(items)}
-        self.pointers = list(range(len(items)))
-        self.setCount = len(items)
-        self.ranks = [0] * len(items)
-
-    def find(self, x: int) -> int:
-        while self.pointers[x] != x:
-            x, self.pointers[x] = self.pointers[x], self.pointers[self.pointers[x]]
-        return x
-
-    def union(self, x_original: T, y_original: T) -> None:
-        x = self.toIndex[x_original]
-        y = self.toIndex[y_original]
-        x = self.find(x)
-        y = self.find(y)
-        if x == y:
-            return
-        if self.ranks[x] < self.ranks[y]:
-            x, y = y, x
-        self.pointers[y] = x
-        self.setCount -= 1
-        if self.ranks[x] == self.ranks[y]:
-            self.ranks[x] += 1
-        return
-
-
 def part2(raw: str):
-    if raw == test1:
-        n_edges = 10
-    else:
-        n_edges = 1000
     coords_list = parse(raw)
-    adjacency = defaultdict(list)
     edge_heap = []
     # heapify()
     for abc in coords_list:
@@ -108,10 +71,10 @@ def part2(raw: str):
                 continue
             edge_heap.append((l2squared(xyz, abc), abc, xyz))
     heapify(edge_heap)
-    unionFind = UnionFind(coords_list)
-    while unionFind.setCount > 1:
+    union_find = UnionFind(coords_list)
+    while union_find.setCount > 1:
         _, abc, xyz = heappop(edge_heap)
-        unionFind.union(abc, xyz)
+        union_find.union(abc, xyz)
     return abc[0] * xyz[0]
 
 
@@ -140,7 +103,7 @@ test1 = """162,817,812
 expected1 = 40
 
 test2 = test1
-expected2 = None
+expected2 = 25272
 
 
 def main():
