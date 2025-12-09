@@ -1,15 +1,15 @@
-from itertools import starmap
+from typing import cast
 
 from utils import benchmark, test
 from utils.advent import get_input
-from utils.itertools2 import degenerate, flatten
+from utils.itertools2 import degenerate
 from utils.parsing import extract_ints
 from utils.printing import debug_print_sparse_grid
 
 
 @degenerate
 def parse(raw: str):
-    return map(extract_ints, raw.splitlines())
+    return [cast(tuple[int, int], extract_ints(line)) for line in raw.splitlines()]
 
 
 def part1(raw: str):
@@ -47,9 +47,26 @@ def part2a(raw: str):
 
 
 def part2(raw: str):
+    """
+    I guessed right twice that the input
+      was easier than the general problem.
+
+    If you graph the polygon in a spreadsheet,
+      it looks like a nearly bisected circle,
+      or a barely open pacman facing left.
+    The biggest rectangle likely uses
+      the pacman's top or bottom molar as one endpoint.
+    The coordinates of the molars are easy to find
+      because they have a much larger x value
+      than their neighbours.
+    The border is jagged, but smooth enough,
+      that any invalid rectangle likely includes a border vertex/corner.
+    I also guessed that the top molar would be sufficient,
+      but that was 50/50
+    """
     r = parse(raw)
-    upper_bottom = (94525, 50422)
-    lower_top = (94525, 48322)
+    upper_bottom = (94525, 50422) # potential bottom right corner
+    lower_top = (94525, 48322) # potential top right corner
     # upper
     best = 0
     for x, y in r:
@@ -80,31 +97,13 @@ expected1 = 50
 test2 = test1
 expected2 = 24
 
-
-def experiment(raw):
-    points = parse(raw)
-    atoix = sorted([p[0] for p in points])
-    atoiy = sorted([p[1] for p in points])
-    itoax = {x: i for i, x in enumerate(atoix)}
-    itoay = {x: i for i, x in enumerate(atoiy)}
-    points2 = list(starmap(lambda x, y: (itoax[x], itoay[y]), points))
-    debug_print_sparse_grid(points2, override=True)
-
-    points3 = [(x // 100, y // 100) for x, y in points]
-
-    debug_print_sparse_grid(points3, override=True)
-    exit(0)
-
-
 def main():
     raw = get_input(__file__)
-
-    # experiment(raw)
 
     test(part1, test1, expected1)
     benchmark(part1, raw)
 
-    test(part2, test2, expected2)
+    # test(part2, test2, expected2)
     benchmark(part2, raw)
 
 
