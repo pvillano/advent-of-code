@@ -24,10 +24,10 @@ def debug_print(*args, override=False, **kwargs) -> None:
     """
     if not (DEBUG or override):
         return
-    return print(*args, **kwargs, file=sys.stderr, flush=True)
+    print(*args, **kwargs, file=sys.stderr, flush=True)
 
 
-def debug_print_grid(grid: list[str] or list[list[any]] or np.ndarray, *, override=False) -> None:
+def debug_print_grid(grid: list[str] | list[list[Any]] | np.ndarray, *, override=False) -> None:
     """
 
     :param grid:
@@ -73,10 +73,10 @@ def debug_print_recursive(*args, override=False, **kwargs) -> None:
     if not (DEBUG or override):
         return
     indent = len(inspect.stack()) - BASE_INDENT
-    return print(" |" * indent, *args, **kwargs, file=sys.stderr, flush=True)
+    print(" |" * indent, *args, **kwargs, file=sys.stderr, flush=True)
 
 
-def debug_print_sparse_grid(grid_map: dict[(int, int), Any] or set, *, transpose=False, override=False) -> None:
+def debug_print_sparse_grid(grid_map: dict[tuple[int, int], Any] | Iterable[tuple[int, int]], *, transpose=False, override=False) -> None:
     """
     Prints a sparse grid
     :param grid_map:

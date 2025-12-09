@@ -2,7 +2,6 @@ __all__ = ["rotations", "flatten", "degenerate"]
 
 from collections.abc import Iterable, Callable
 from itertools import chain
-from typing import Iterator
 
 from utils.grids import transpose
 
@@ -16,7 +15,7 @@ def rotations(iterable: Iterable):
 flatten = chain.from_iterable
 
 
-def degenerate[**I, O](user_function: Callable[I, Iterator[O]]) -> Callable[I, list[O]]:
+def degenerate[**I, O](user_function: Callable[I, Iterable[O]]) -> Callable[I, list[O]]:
     """
     Turns a generator into a function which returns a list
     :param user_function:

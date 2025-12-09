@@ -1,7 +1,7 @@
 __all__ = ["otqdm"]
 
 import time
-from collections.abc import Sized, Iterable
+from collections.abc import Collection
 from math import log, exp, inf
 
 UTF = " " + "".join(map(chr, range(0x258F, 0x2587, -1)))
@@ -23,7 +23,7 @@ def format_interval(ns):
 
 
 def otqdm(
-    iterator: Sized and Iterable,
+    iterator: Collection,
     min_interval=1,
     min_iters=1,
     unit="it/s",
@@ -33,7 +33,7 @@ def otqdm(
     len_iterator=None,
 ):
     """
-    Operates similarly to tqdm, but also gives an estimate of the fuction's algorithmic complexity
+    Operates similarly to tqdm, but also gives an estimate of the function's algorithmic complexity
     :param iterator:
     :param min_interval:
     :param min_iters:
