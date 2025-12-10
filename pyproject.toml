@@ -16,6 +16,8 @@ dependencies = [
     "z3-solver",
     "graphviz",
     "lxml",
+    "scipy>=1.16.3",
+    "scipy-stubs~=1.16.3",
 ]
 
 [dependency-groups]
