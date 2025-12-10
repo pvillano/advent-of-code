@@ -1,7 +1,6 @@
 from itertools import count
 
 import scipy
-from tqdm import tqdm
 
 from utils import benchmark, test
 from utils.advent import get_input
@@ -13,13 +12,12 @@ from utils.parsing import extract_ints
 @degenerate
 def parse(raw: str):
     for line in raw.splitlines():
-        light_str, *buttons_str_list, joltage_str = line.split(' ')
+        light_str, *buttons_str_list, _ = line.split(' ')
         lights = int("".join(reversed(light_str[1:-1])).replace(".", '0').replace('#', '1'), base=2)
         buttons = []
         for button_str in buttons_str_list:
             buttons.append(sum(1 << int(i) for i in extract_ints(button_str)))
-        joltages = extract_ints(joltage_str)
-        yield lights, buttons, joltages
+        yield lights, buttons
 
 
 @degenerate
@@ -55,54 +53,21 @@ def calc_cost(lights, buttons):
 
 def part1(raw: str):
     problems = parse(raw)
-
-    def itercosts():
-        for lights, buttons, _ in problems:
-            x = calc_cost(lights, buttons)
-            # print(x)
-            yield x
-
-    # sum(itercosts())
-    # exit(0)
-
-    return sum(itercosts())
+    return sum(calc_cost(lights, buttons) for lights, buttons in problems)
 
 
-def calc_cost2(joltages: tuple[int], button_indexes: list[tuple[int, ...]]):
-    buttons = [[int(i in b) for i in range(len(joltages))] for b in button_indexes]
-    seen = {tuple([0] * len(joltages))}
-    prev_states = [tuple([0] * len(joltages))]
-    for cur_cost in count(1):
-        prev_len_seen = len(seen)
-        next_states = []
-        for button in buttons:  # does this loop order matter?
-            for parent in prev_states:
-                candidate = tuple(i + j for i, j in zip(button, parent))
-                if candidate in seen:
-                    continue
-                if candidate == joltages:
-                    return cur_cost
-                seen.add(candidate)
-                next_states.append(candidate)
-        assert len(seen) > prev_len_seen
-        prev_states = next_states
-
-
-def calc_cost3(joltages: tuple[int], button_indexes: list[tuple[int, ...]]):
+def calc_cost2(joltages: tuple[int, ...], button_indexes: list[tuple[int, ...]]):
     buttons = [[int(i in b) for i in range(len(joltages))] for b in button_indexes]
     c = [1] * len(buttons)
     A_eq = transpose(buttons)
     b_eq = joltages
 
-    result = scipy.optimize.linprog(c=c, A_eq=A_eq, b_eq=b_eq, method='highs', integrality=1)
+    result = scipy.optimize.linprog(c=c, A_eq=A_eq, b_eq=b_eq, integrality=1)
     return result.fun
 
 
 def part2(raw: str):
-    s = 0
-    for buttons, joltages in parse2(raw):
-        s += calc_cost3(joltages, buttons)
-    return s
+    return sum(calc_cost2(joltages, buttons) for buttons, joltages in parse2(raw))
 
 
 test1 = """[.##.] (3) (1,3) (2) (2,3) (0,2) (0,1) {3,5,4,7}
