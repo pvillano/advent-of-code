@@ -67,9 +67,9 @@ def reverse_edges[T: AdjacencyListType](adj_list: T) -> T:
     Reverses the edges in an adjacency list graph
     """
     new_adj_list = {k: [] for k in adj_list}
-    for node, neighbors in adj_list.items():
-        for neighbor in neighbors:
-            new_adj_list[neighbor].append(node)
+    for parent, children in adj_list.items():
+        for child in children:
+            new_adj_list[child].append(parent)
     return new_adj_list
 
 
